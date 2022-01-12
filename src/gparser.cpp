@@ -14,7 +14,7 @@ bool GParser::analysis()
 {
     this->getNextToken();
     m_pTree->m_pRoot = this->parseProgram();
-//    m_pTree->m_pRoot->traversal();
+    m_pTree->m_pRoot->traversal();
     return true;
 }
 
@@ -33,7 +33,7 @@ GSyntaxNode* GParser::parseExpression()
 GSyntaxNode* GParser::parseExpressionAdd()
 {
     GSyntaxNode* left = this->parseExpressionMul();
-    while(true)
+    while(m_pCurrentToken)
     {
         if(m_pCurrentToken->m_type == TokenType::Add || m_pCurrentToken->m_type == TokenType::Sub)
         {
@@ -42,12 +42,13 @@ GSyntaxNode* GParser::parseExpressionAdd()
             {
                 binOp = BinaryOperator::OP_Add;
             }
-            this->getNextToken();
+
             GBinaryNode* node = new GBinaryNode();
+            node->m_pToken = m_pCurrentToken;
+            this->getNextToken();
             node->m_binOp = binOp;
             node->m_pLeftNode = left;
             node->m_pRightNode = this->parseExpressionMul();
-            node->m_pToken = m_pCurrentToken;
             left = node;
         }
         else
@@ -61,7 +62,7 @@ GSyntaxNode* GParser::parseExpressionAdd()
 GSyntaxNode* GParser::parseExpressionMul()
 {
     GSyntaxNode* left = this->parseNumber();
-    while(true)
+    while(m_pCurrentToken)
     {
         if(m_pCurrentToken->m_type == TokenType::Mul || m_pCurrentToken->m_type == TokenType::Div)
         {
@@ -70,12 +71,13 @@ GSyntaxNode* GParser::parseExpressionMul()
             {
                 binOp = BinaryOperator::OP_Mul;
             }
-            this->getNextToken();
+
             GBinaryNode* node = new GBinaryNode();
+            node->m_pToken = m_pCurrentToken;
+            this->getNextToken();
             node->m_binOp = binOp;
             node->m_pLeftNode = left;
             node->m_pRightNode = this->parseNumber();
-            node->m_pToken = m_pCurrentToken;
             left = node;
         }
         else
