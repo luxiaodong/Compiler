@@ -4,7 +4,6 @@
 GLexer::GLexer(const QString& code) : m_source(code) , m_line(0), m_lineCursor(0), m_cursor(0)
 {
     m_tokenList.clear();
-    m_data = code.constData();
     m_size = m_source.size();
 }
 
@@ -87,6 +86,7 @@ bool GLexer::nextToken()
     }
     else
     {
+        qDebug()<<"unknow token type at "<<(*token);
         return false;
     }
 

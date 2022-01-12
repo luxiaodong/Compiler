@@ -22,13 +22,16 @@ void GCompiler::readFile(const QString& filePath)
 void GCompiler::readText(const QString& text)
 {
     qDebug()<<text;
+
     GLexer lexer(text);
     if(lexer.analysis() == false) return;
     lexer.printTokens();
+
+    GParser parser(lexer);
+    if(parser.analysis() == false) return;
 }
 
 void GCompiler::test()
 {
-    QString str = "3+16/2+2*1";
-    this->readText(str);
+    this->readText("5+1-3*4/2");
 }

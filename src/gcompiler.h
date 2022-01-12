@@ -14,7 +14,6 @@ public:
     void readFile(const QString& filePath);
     void readText(const QString& text);
     void test();
-
 };
 
 #endif // GCOMPILER_H

@@ -13,7 +13,10 @@ SOURCES += main.cpp \
     src/glexer.cpp \
     src/gcompiler.cpp \
     src/gparser.cpp \
-    src/gtoken.cpp
+    src/gtoken.cpp \
+    src/ggeneratecode.cpp \
+    src/gsyntaxtree.cpp \
+    src/gsyntaxnode.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -30,4 +33,7 @@ HEADERS += \
     src/glexer.h \
     src/gcompiler.h \
     src/gparser.h \
-    src/gtoken.h
+    src/gtoken.h \
+    src/ggeneratecode.h \
+    src/gsyntaxtree.h \
+    src/gsyntaxnode.h

@@ -18,13 +18,11 @@ private:
     void nextChar();
     bool nextToken();
 
-private:
-    bool isSpace(const QChar& c);
+public:
+    QList<GToken*> m_tokenList;
 
 private:
     QString m_source;
-    const QChar* m_data;
-    QList<GToken*> m_tokenList;
     QChar m_currentChar;
     int m_line;
     int m_lineCursor; //行的首字符位置.

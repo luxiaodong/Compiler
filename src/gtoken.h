@@ -18,7 +18,9 @@ class GToken
 {
 public:
     GToken();
+    void print();
 
+public:
     TokenType m_type;
     QString m_context; //包含长度
     QPoint m_position; //启始位置
