@@ -3,6 +3,8 @@
 #include <QFile>
 #include <QDebug>
 
+#include "src/ggeneratecode.h"
+
 GCompiler::GCompiler()
 {
 }
@@ -29,6 +31,10 @@ void GCompiler::readText(const QString& text)
 
     GParser parser(lexer);
     if(parser.analysis() == false) return;
+
+    GGenerateCode genCode;
+    parser.m_pTree->m_pRoot->generateCode(&genCode);
+    genCode.printCode();
 }
 
 void GCompiler::test()

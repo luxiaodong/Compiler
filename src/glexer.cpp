@@ -35,7 +35,7 @@ bool GLexer::nextToken()
         {
             this->nextChar();
         }
-        else if(m_currentChar == "\n")
+        else if(m_currentChar == '\n')
         {
             m_line++;
             m_lineCursor = m_cursor;

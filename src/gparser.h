@@ -31,10 +31,12 @@ private:
 private:
     void getNextToken();
 
+public:
+    GSyntaxTree* m_pTree;
+
 private:
     const GLexer m_lexer;
     GToken* m_pCurrentToken;
-    GSyntaxTree* m_pTree;
     int m_tokenIndex;
 };
 

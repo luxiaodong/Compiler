@@ -92,6 +92,7 @@ GSyntaxNode* GParser::parseNumber()
 {
     GNumberNode* node = new GNumberNode();
     node->m_pToken = m_pCurrentToken;
+    node->m_value = m_pCurrentToken->m_context.toInt();
     this->getNextToken();
     return node;
 }
