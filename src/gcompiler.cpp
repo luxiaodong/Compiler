@@ -39,5 +39,7 @@ void GCompiler::readText(const QString& text)
 
 void GCompiler::test()
 {
-    this->readText("5+1-3*4/2");
+//    this->readText("2*3");
+//    this->readText("5+1-3*4/2");
+    this->readText("5+(1-3)*4/2");
 }

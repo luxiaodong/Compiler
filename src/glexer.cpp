@@ -75,6 +75,16 @@ bool GLexer::nextToken()
         token->m_type = TokenType::Div;
         nextChar();
     }
+    else if(m_currentChar == "(")
+    {
+        token->m_type = TokenType::LeftParent;
+        nextChar();
+    }
+    else if(m_currentChar == ")")
+    {
+        token->m_type = TokenType::RightParent;
+        nextChar();
+    }
     else if(m_currentChar.isDigit())
     {
         token->m_type = TokenType::Num;

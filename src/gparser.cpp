@@ -90,6 +90,14 @@ GSyntaxNode* GParser::parseExpressionMul()
 
 GSyntaxNode* GParser::parseNumber()
 {
+    if(m_pCurrentToken && m_pCurrentToken->m_type == TokenType::LeftParent)
+    {
+        this->getNextToken();
+        GSyntaxNode* node = this->parseExpression();
+        this->getNextToken();
+        return node;
+    }
+
     GNumberNode* node = new GNumberNode();
     node->m_pToken = m_pCurrentToken;
     node->m_value = m_pCurrentToken->m_context.toInt();

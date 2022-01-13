@@ -13,6 +13,7 @@
 // mul : mul * num
 //       mul / num
 // num : digit
+//       (expression)
 
 class GParser
 {

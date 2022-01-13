@@ -12,6 +12,8 @@ enum TokenType{
     Mul,
     Div,
     Num,
+    LeftParent,
+    RightParent,
 };
 
 class GToken
