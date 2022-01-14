@@ -17,7 +17,9 @@ SOURCES += main.cpp \
     src/gtoken.cpp \
     src/ggeneratecode.cpp \
     src/gsyntaxtree.cpp \
-    src/gsyntaxnode.cpp
+    src/gsyntaxnode.cpp \
+    theory/ggrammarformula.cpp \
+    theory/ggrammarparser.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -37,4 +39,6 @@ HEADERS += \
     src/gtoken.h \
     src/ggeneratecode.h \
     src/gsyntaxtree.h \
-    src/gsyntaxnode.h
+    src/gsyntaxnode.h \
+    theory/ggrammarformula.h \
+    theory/ggrammarparser.h
