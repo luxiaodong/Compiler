@@ -18,10 +18,8 @@ private:
     void calculateFirstSet();
     bool calculateFirstSet(const QString& head); //返回m_firstSet是否改动过
     bool isContainEmpty(const QString& head) const;
-
     void calculateFollowSet();
     bool calculateFollowSet(const QString& head); //返回m_followSet是否改动过
-
     void calculateSelectSet();
 
 private:

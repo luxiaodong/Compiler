@@ -23,5 +23,5 @@ bool GGrammarFormula::isTerminal(QString str)
 
 void GGrammarFormula::print()
 {
-    qDebug()<<m_head<<" -> "<<m_stringList;
+    qDebug()<<m_head<<" -> "<<m_stringList<<"  =>  "<<m_selectList;
 }

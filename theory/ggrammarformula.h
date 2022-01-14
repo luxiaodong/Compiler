@@ -26,6 +26,9 @@ public:
     bool isEmpty(){return m_isEmpty;}
     void print();
 
+public:
+    QStringList m_selectList;
+
 private:
     const QString m_head;
     const QStringList m_stringList;

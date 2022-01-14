@@ -17,17 +17,13 @@ void GGrammarParser::test()
     this->create(list);
     this->calculateFirstSet();
     this->calculateFollowSet();
+    this->calculateSelectSet();
     this->print();
 }
 
 void GGrammarParser::print()
 {
-    foreach(GGrammarFormula* formula, m_formulas)
-    {
-        formula->print();
-    }
-
-    qDebug()<<"=================================";
+    qDebug()<<"================================= first";
 
     foreach(QString head, m_heads)
     {
@@ -35,12 +31,19 @@ void GGrammarParser::print()
         qDebug()<<head<<" -> "<<list;
     }
 
-    qDebug()<<"=================================";
+    qDebug()<<"================================= follow";
 
     foreach(QString head, m_heads)
     {
         QStringList list = m_followSet.value(head);
         qDebug()<<head<<" -> "<<list;
+    }
+
+    qDebug()<<"================================= select";
+
+    foreach(GGrammarFormula* formula, m_formulas)
+    {
+        formula->print();
     }
 }
 
@@ -231,8 +234,27 @@ bool GGrammarParser::calculateFollowSet(const QString& head)
 }
 
 void GGrammarParser::calculateSelectSet()
-{}
-
+{
+    foreach(GGrammarFormula* formula, m_formulas)
+    {
+        if(formula->isEmpty())
+        {
+            formula->m_selectList = m_followSet.value( formula->head() );
+        }
+        else
+        {
+            QString symbol = formula->first();
+            if(GGrammarFormula::isTerminal(symbol))
+            {
+                formula->m_selectList.append(symbol);
+            }
+            else
+            {
+                formula->m_selectList = m_firstSet.value( symbol );
+            }
+        }
+    }
+}
 
 bool GGrammarParser::isContainEmpty(const QString& head) const
 {
