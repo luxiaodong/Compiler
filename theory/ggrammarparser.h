@@ -20,6 +20,8 @@ private:
     bool isContainEmpty(const QString& head) const;
 
     void calculateFollowSet();
+    bool calculateFollowSet(const QString& head); //返回m_followSet是否改动过
+
     void calculateSelectSet();
 
 private:
@@ -27,6 +29,7 @@ private:
     QStringList m_heads;
     QMap<QString, QStringList> m_firstSet;
     QMap<QString, QStringList> m_followSet;
+    QString m_startSymbol;
 };
 
 #endif // GGRAMMARPARSER_H

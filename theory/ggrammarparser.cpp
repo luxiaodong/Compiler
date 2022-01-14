@@ -7,6 +7,7 @@ GGrammarParser::GGrammarParser()
 
 void GGrammarParser::test()
 {
+    // 没有定义开始符号
     QStringList list;
     list<<QString("E->T,E'");
     list<<QString("E'->+,T,E'|@");
@@ -15,6 +16,7 @@ void GGrammarParser::test()
     list<<QString("F->(,E,)|id");
     this->create(list);
     this->calculateFirstSet();
+    this->calculateFollowSet();
     this->print();
 }
 
@@ -29,8 +31,16 @@ void GGrammarParser::print()
 
     foreach(QString head, m_heads)
     {
-        QStringList follow = m_firstSet.value(head);
-        qDebug()<<head<<" -> "<<follow;
+        QStringList list = m_firstSet.value(head);
+        qDebug()<<head<<" -> "<<list;
+    }
+
+    qDebug()<<"=================================";
+
+    foreach(QString head, m_heads)
+    {
+        QStringList list = m_followSet.value(head);
+        qDebug()<<head<<" -> "<<list;
     }
 }
 
@@ -38,11 +48,13 @@ void GGrammarParser::create(const QStringList& list)
 {
     m_formulas.clear();
     m_heads.clear();
-    foreach(QString single, list)
+    for(int i=0; i< list.size(); ++i)
     {
+        QString single = list.at(i);
         QStringList list1 = single.split("->");
         QString head = list1.first();
         m_heads.append(head);
+        if(i==0) m_startSymbol = head;
 
         QStringList list2 = list1.last().split("|");
         foreach(QString str, list2)
@@ -63,7 +75,6 @@ void GGrammarParser::create(const QStringList& list)
 // 非终结符的first集合计算
 void GGrammarParser::calculateFirstSet()
 {
-    m_firstSet.clear();
     while(true)
     {
         bool isChanged = false;
@@ -127,18 +138,108 @@ bool GGrammarParser::calculateFirstSet(const QString& head)
     return isSymbolAppend;
 }
 
+// 非终结符的follow集合计算
+void GGrammarParser::calculateFollowSet()
+{
+    QStringList list = m_followSet.value(m_startSymbol);
+    list.append("#");
+    m_followSet.insert(m_startSymbol, list);
+
+    while(true){
+        bool isChanged = false;
+        foreach(QString head, m_heads)
+        {
+            bool isSymbolAppend = this->calculateFollowSet(head);
+            if(isSymbolAppend) isChanged = true;
+        }
+
+        if(isChanged == false) return ;
+    }
+}
+
+bool GGrammarParser::calculateFollowSet(const QString& head)
+{
+    bool isSymbolAppend = false;
+    QStringList follow = m_followSet.value(head);
+    foreach(GGrammarFormula* formula, m_formulas)
+    {
+        for(int i = 0; i < formula->size(); ++i)
+        {
+            if(formula->index(i) == head) //找到了
+            {
+                int j = i+1;
+                while(j < formula->size())
+                {
+                    QString symbol = formula->index(j);
+                    if(GGrammarFormula::isTerminal(symbol))
+                    {
+                        if(follow.indexOf(symbol) == -1)
+                        {
+                            follow.append(symbol);
+                            isSymbolAppend = true;
+                        }
+                        break;
+                    }
+                    else // 非终结符号
+                    {
+                        bool isContainEmpty = false;
+                        QStringList list = m_firstSet.value(symbol);
+                        foreach(QString single, list)
+                        {
+                            if(single == GGrammarFormula::emptySymbol())
+                            {
+                                isContainEmpty = true;
+                            }
+                            else
+                            {
+                                if(follow.indexOf(single) == -1)
+                                {
+                                    follow.append(single);
+                                    isSymbolAppend = true;
+                                }
+                            }
+                        }
+
+                        if(isContainEmpty == false) break;
+                        j++;
+                    }
+                }
+
+                //follow A中的所有符号都在 follow B中
+                if(j == formula->size())
+                {
+                    QStringList list = m_followSet.value(formula->head());
+                    foreach(QString single, list)
+                    {
+                        if(follow.indexOf(single) == -1)
+                        {
+                            follow.append(single);
+                            isSymbolAppend = true;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    if(isSymbolAppend)
+    {
+        m_followSet.insert(head, follow);
+    }
+
+    return isSymbolAppend;
+}
+
+void GGrammarParser::calculateSelectSet()
+{}
+
+
 bool GGrammarParser::isContainEmpty(const QString& head) const
 {
-    QStringList follow = m_followSet.value(head);
+    QStringList follow = m_firstSet.value(head);
     if( follow.indexOf( GGrammarFormula::emptySymbol() ) == -1)
     {
         return false;
     }
     return true;
 }
-
-void GGrammarParser::calculateFollowSet()
-{}
-
-void GGrammarParser::calculateSelectSet()
-{}
