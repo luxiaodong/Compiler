@@ -4,7 +4,7 @@
 #include <QDebug>
 
 #include "src/ggeneratecode.h"
-#include "theory/ggrammarparser.h"
+#include "theory/gcontextfreegrammar.h"
 
 GCompiler::GCompiler()
 {
@@ -45,7 +45,7 @@ void GCompiler::test()
 //    this->readText("5+(1-3)*4/2");
 //    this->readText("5+a1+(1-3)*4/2");
 
-    GGrammarParser parser;
+    GContextFreeGrammar parser;
     parser.test();
 }
 

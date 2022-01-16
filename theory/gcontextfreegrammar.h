@@ -1,15 +1,13 @@
-#ifndef GGRAMMARPARSER_H
-#define GGRAMMARPARSER_H
+#ifndef GCONTEXTFREEGRAMMAR_H
+#define GCONTEXTFREEGRAMMAR_H
 
-#include <QStringList>
-#include <QList>
 #include <QMap>
-#include "theory/ggrammarformula.h"
+#include "theory/gcontextsensitivegrammar.h"
 
-class GGrammarParser
+class GContextFreeGrammar : public GContextSensitiveGrammar
 {
 public:
-    GGrammarParser();
+    GContextFreeGrammar();
     void test();
 
 private:
@@ -23,11 +21,10 @@ private:
     void calculateSelectSet();
 
 private:
-    QList<GGrammarFormula*> m_formulas;
+    QList<GProductionII*> m_formulas;
     QStringList m_heads;
     QMap<QString, QStringList> m_firstSet;
     QMap<QString, QStringList> m_followSet;
-    QString m_startSymbol;
 };
 
-#endif // GGRAMMARPARSER_H
+#endif // GCONTEXTFREEGRAMMAR_H

@@ -1,11 +1,11 @@
-#include "ggrammarparser.h"
-#include <QtDebug>
+#include "gcontextfreegrammar.h"
 
-GGrammarParser::GGrammarParser()
+GContextFreeGrammar::GContextFreeGrammar()
 {
+
 }
 
-void GGrammarParser::test()
+void GContextFreeGrammar::test()
 {
     // 没有定义开始符号
     QStringList list;
@@ -21,7 +21,7 @@ void GGrammarParser::test()
     this->print();
 }
 
-void GGrammarParser::print()
+void GContextFreeGrammar::print()
 {
     qDebug()<<"================================= first";
 
@@ -41,13 +41,13 @@ void GGrammarParser::print()
 
     qDebug()<<"================================= select";
 
-    foreach(GGrammarFormula* formula, m_formulas)
+    foreach(GProductionII* formula, m_formulas)
     {
         formula->print();
     }
 }
 
-void GGrammarParser::create(const QStringList& list)
+void GContextFreeGrammar::create(const QStringList& list)
 {
     m_formulas.clear();
     m_heads.clear();
@@ -63,7 +63,7 @@ void GGrammarParser::create(const QStringList& list)
         foreach(QString str, list2)
         {
             QStringList list3 = str.split(",");
-            GGrammarFormula* formula = new GGrammarFormula(head, list3);
+            GProductionII* formula = new GProductionII(head, list3);
             m_formulas.append(formula);
         }
     }
@@ -75,8 +75,9 @@ void GGrammarParser::create(const QStringList& list)
     }
 }
 
+
 // 非终结符的first集合计算
-void GGrammarParser::calculateFirstSet()
+void GContextFreeGrammar::calculateFirstSet()
 {
     while(true)
     {
@@ -91,22 +92,22 @@ void GGrammarParser::calculateFirstSet()
     }
 }
 
-bool GGrammarParser::calculateFirstSet(const QString& head)
+bool GContextFreeGrammar::calculateFirstSet(const QString& head)
 {
     bool isSymbolAppend = false;
-    QStringList follow = m_firstSet.value(head);
-    foreach(GGrammarFormula* formula, m_formulas)
+    QStringList tempList = m_firstSet.value(head);
+    foreach(GProductionII* formula, m_formulas)
     {
         if(formula->head() == head) // 只处理相同的左部
         {
             for(int i = 0; i < formula->size(); ++i)
             {
                 QString symbol = formula->index(i);
-                if( GGrammarFormula::isTerminal(symbol) ) // 是终结符号
+                if( GProductionII::isTerminal(symbol) ) // 是终结符号
                 {
-                    if(follow.indexOf(symbol) == -1) // first集里找不到该符号
+                    if(tempList.indexOf(symbol) == -1) // first集里找不到该符号
                     {
-                        follow.append(symbol);
+                        tempList.append(symbol);
                         isSymbolAppend = true;
                     }
                     break;
@@ -117,9 +118,9 @@ bool GGrammarParser::calculateFirstSet(const QString& head)
                     QStringList list = m_firstSet.value(symbol);
                     foreach(QString single, list)
                     {
-                        if(follow.indexOf(single) == -1)
+                        if(tempList.indexOf(single) == -1)
                         {
-                            follow.append(single);
+                            tempList.append(single);
                             isSymbolAppend = true;
                         }
                     }
@@ -135,18 +136,18 @@ bool GGrammarParser::calculateFirstSet(const QString& head)
 
     if(isSymbolAppend)
     {
-        m_firstSet.insert(head, follow);
+        m_firstSet.insert(head, tempList);
     }
 
     return isSymbolAppend;
 }
 
 // 非终结符的follow集合计算
-void GGrammarParser::calculateFollowSet()
+void GContextFreeGrammar::calculateFollowSet()
 {
-    QStringList list = m_followSet.value(m_startSymbol);
-    list.append("#");
-    m_followSet.insert(m_startSymbol, list);
+    QStringList tempList = m_followSet.value(m_startSymbol);
+    tempList.append("#");
+    m_followSet.insert(m_startSymbol, tempList);
 
     while(true){
         bool isChanged = false;
@@ -160,11 +161,11 @@ void GGrammarParser::calculateFollowSet()
     }
 }
 
-bool GGrammarParser::calculateFollowSet(const QString& head)
+bool GContextFreeGrammar::calculateFollowSet(const QString& head)
 {
     bool isSymbolAppend = false;
-    QStringList follow = m_followSet.value(head);
-    foreach(GGrammarFormula* formula, m_formulas)
+    QStringList tempList = m_followSet.value(head);
+    foreach(GProductionII* formula, m_formulas)
     {
         for(int i = 0; i < formula->size(); ++i)
         {
@@ -174,11 +175,11 @@ bool GGrammarParser::calculateFollowSet(const QString& head)
                 while(j < formula->size())
                 {
                     QString symbol = formula->index(j);
-                    if(GGrammarFormula::isTerminal(symbol))
+                    if(GProductionII::isTerminal(symbol))
                     {
-                        if(follow.indexOf(symbol) == -1)
+                        if(tempList.indexOf(symbol) == -1)
                         {
-                            follow.append(symbol);
+                            tempList.append(symbol);
                             isSymbolAppend = true;
                         }
                         break;
@@ -189,15 +190,15 @@ bool GGrammarParser::calculateFollowSet(const QString& head)
                         QStringList list = m_firstSet.value(symbol);
                         foreach(QString single, list)
                         {
-                            if(single == GGrammarFormula::emptySymbol())
+                            if(single == GProduction::emptySymbol())
                             {
                                 isContainEmpty = true;
                             }
                             else
                             {
-                                if(follow.indexOf(single) == -1)
+                                if(tempList.indexOf(single) == -1)
                                 {
-                                    follow.append(single);
+                                    tempList.append(single);
                                     isSymbolAppend = true;
                                 }
                             }
@@ -214,9 +215,9 @@ bool GGrammarParser::calculateFollowSet(const QString& head)
                     QStringList list = m_followSet.value(formula->head());
                     foreach(QString single, list)
                     {
-                        if(follow.indexOf(single) == -1)
+                        if(tempList.indexOf(single) == -1)
                         {
-                            follow.append(single);
+                            tempList.append(single);
                             isSymbolAppend = true;
                         }
                     }
@@ -227,15 +228,15 @@ bool GGrammarParser::calculateFollowSet(const QString& head)
 
     if(isSymbolAppend)
     {
-        m_followSet.insert(head, follow);
+        m_followSet.insert(head, tempList);
     }
 
     return isSymbolAppend;
 }
 
-void GGrammarParser::calculateSelectSet()
+void GContextFreeGrammar::calculateSelectSet()
 {
-    foreach(GGrammarFormula* formula, m_formulas)
+    foreach(GProductionII* formula, m_formulas)
     {
         if(formula->isEmpty())
         {
@@ -244,7 +245,7 @@ void GGrammarParser::calculateSelectSet()
         else
         {
             QString symbol = formula->first();
-            if(GGrammarFormula::isTerminal(symbol))
+            if(GProductionII::isTerminal(symbol))
             {
                 formula->m_selectList.append(symbol);
             }
@@ -256,10 +257,10 @@ void GGrammarParser::calculateSelectSet()
     }
 }
 
-bool GGrammarParser::isContainEmpty(const QString& head) const
+bool GContextFreeGrammar::isContainEmpty(const QString& head) const
 {
     QStringList follow = m_firstSet.value(head);
-    if( follow.indexOf( GGrammarFormula::emptySymbol() ) == -1)
+    if( follow.indexOf( GProduction::emptySymbol() ) == -1)
     {
         return false;
     }

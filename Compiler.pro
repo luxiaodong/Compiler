@@ -18,8 +18,12 @@ SOURCES += main.cpp \
     src/ggeneratecode.cpp \
     src/gsyntaxtree.cpp \
     src/gsyntaxnode.cpp \
-    theory/ggrammarformula.cpp \
-    theory/ggrammarparser.cpp
+    theory/gunrestrictedgrammar.cpp \
+    theory/gcontextsensitivegrammar.cpp \
+    theory/gcontextfreegrammar.cpp \
+    theory/gregulargraamar.cpp \
+    theory/gproduction.cpp \
+    theory/gfiniteautomata.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -40,5 +44,9 @@ HEADERS += \
     src/ggeneratecode.h \
     src/gsyntaxtree.h \
     src/gsyntaxnode.h \
-    theory/ggrammarformula.h \
-    theory/ggrammarparser.h
+    theory/gunrestrictedgrammar.h \
+    theory/gcontextsensitivegrammar.h \
+    theory/gcontextfreegrammar.h \
+    theory/gregulargraamar.h \
+    theory/gproduction.h \
+    theory/gfiniteautomata.h
