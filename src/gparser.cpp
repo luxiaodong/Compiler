@@ -14,7 +14,6 @@ bool GParser::analysis()
 {
     this->getNextToken();
     m_pTree->m_pRoot = this->parseProgram();
-//    m_pTree->m_pRoot->traversal();
     return true;
 }
 
@@ -22,7 +21,11 @@ GSyntaxNode* GParser::parseProgram()
 {
     GProgramNode* node = new GProgramNode();
     node->m_sentenceList.clear();
-    node->m_sentenceList.append(this->parseSentence());
+    while(m_pCurrentToken->m_type != TokenType::Eof)
+    {
+        node->m_sentenceList.append(this->parseSentence());
+    }
+
     return node;
 }
 
@@ -30,14 +33,30 @@ GSyntaxNode* GParser::parseSentence()
 {
     GSentenceNode* node = new GSentenceNode();
     node->m_pNode = this->parseExpression();
+    Q_ASSERT(m_pCurrentToken->m_type == TokenType::Semicolon);
+    this->getNextToken();
     return node;
 }
 
 GSyntaxNode* GParser::parseExpression()
 {
     GExpressionNode* node = new GExpressionNode();
-    node->m_pNode = this->parseExpressionAdd();
+    node->m_pNode = this->parseExpressionAssign();
     return node;
+}
+
+GSyntaxNode* GParser::parseExpressionAssign()
+{
+    GSyntaxNode* left = this->parseExpressionAdd();
+    if(m_pCurrentToken->m_type == TokenType::Assign)
+    {
+        this->getNextToken();
+        GAssignNode* node = new GAssignNode();
+        node->m_pLeftNode = left;
+        node->m_pRightNode = this->parseExpressionAssign();
+        return node;
+    }
+    return left;
 }
 
 GSyntaxNode* GParser::parseExpressionAdd()
@@ -71,7 +90,7 @@ GSyntaxNode* GParser::parseExpressionAdd()
 
 GSyntaxNode* GParser::parseExpressionMul()
 {
-    GSyntaxNode* left = this->parseNumber();
+    GSyntaxNode* left = this->parseConstant();
     while(m_pCurrentToken)
     {
         if(m_pCurrentToken->m_type == TokenType::Mul || m_pCurrentToken->m_type == TokenType::Div)
@@ -87,7 +106,7 @@ GSyntaxNode* GParser::parseExpressionMul()
             this->getNextToken();
             node->m_binOp = binOp;
             node->m_pLeftNode = left;
-            node->m_pRightNode = this->parseNumber();
+            node->m_pRightNode = this->parseConstant();
             left = node;
         }
         else
@@ -98,8 +117,9 @@ GSyntaxNode* GParser::parseExpressionMul()
     return left;
 }
 
-GSyntaxNode* GParser::parseNumber()
+GSyntaxNode* GParser::parseConstant()
 {
+    // todo check point.
     if(m_pCurrentToken && m_pCurrentToken->m_type == TokenType::LeftParent)
     {
         this->getNextToken();
@@ -107,8 +127,17 @@ GSyntaxNode* GParser::parseNumber()
         this->getNextToken();
         return node;
     }
+    else if(m_pCurrentToken->m_type == TokenType::Identifier)
+    {
+        GVariableNode* node = new GVariableNode();
+        node->m_pToken = m_pCurrentToken;
+        node->m_name = m_pCurrentToken->m_context;
+        GSymbolTable::addVariable(node->m_name); //添加到符号表
+        this->getNextToken();
+        return node;
+    }
 
-    GNumberNode* node = new GNumberNode();
+    GConstantNode* node = new GConstantNode();
     node->m_pToken = m_pCurrentToken;
     node->m_value = m_pCurrentToken->m_context.toInt();
     this->getNextToken();

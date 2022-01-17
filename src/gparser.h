@@ -1,9 +1,11 @@
 #ifndef GPARSER_H
 #define GPARSER_H
 
+#include <QMap>
 #include "src/glexer.h"
 #include "src/gsyntaxnode.h"
 #include "src/gsyntaxtree.h"
+#include "src/gsymboltable.h"
 
 // program : expression
 // expression ： add
@@ -28,9 +30,10 @@ private:
     GSyntaxNode* parseProgram();
     GSyntaxNode* parseSentence();
     GSyntaxNode* parseExpression();
+    GSyntaxNode* parseExpressionAssign();
     GSyntaxNode* parseExpressionAdd();
     GSyntaxNode* parseExpressionMul();
-    GSyntaxNode* parseNumber();
+    GSyntaxNode* parseConstant();
 
 private:
     void getNextToken();

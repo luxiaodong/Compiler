@@ -2,6 +2,7 @@
 #define GSYNTAXNODE_H
 
 #include "src/gtoken.h"
+#include "src/gvariable.h"
 #include <QList>
 
 enum BinaryOperator{
@@ -54,6 +55,16 @@ public:
     GSyntaxNode* m_pNode;
 };
 
+class GAssignNode : public GSyntaxNode
+{
+public:
+    virtual ~GAssignNode(){}
+    virtual void generateCode(GGenerateCode *genCode);
+public:
+    GSyntaxNode* m_pLeftNode;
+    GSyntaxNode* m_pRightNode;
+};
+
 //二元操作符
 class GBinaryNode : public GSyntaxNode
 {
@@ -67,14 +78,23 @@ public:
     GSyntaxNode* m_pRightNode;
 };
 
-class GNumberNode : public GSyntaxNode
+class GConstantNode : public GSyntaxNode
 {
 public:
-    virtual ~GNumberNode(){}
+    virtual ~GConstantNode(){}
     virtual void generateCode(GGenerateCode*  genCode);
 
 public:
     int m_value;
+};
+
+class GVariableNode : public GSyntaxNode
+{
+public:
+    virtual ~GVariableNode(){}
+    virtual void generateCode(GGenerateCode *genCode);
+public:
+    QString m_name;
 };
 
 #endif // GSYNTAXNODE_H

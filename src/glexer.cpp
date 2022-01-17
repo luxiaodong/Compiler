@@ -10,20 +10,14 @@ GLexer::GLexer(const QString& code) : m_source(code) , m_line(0), m_lineCursor(0
 bool GLexer::analysis()
 {
     this->nextChar();
-    while(true)
-    {
-        if(m_cursor > m_size)
-        {
-            break;
-        }
+    while(nextToken());
 
-        if(nextToken() == false)
-        {
-            return false;
-        }
+    if(m_currentChar == '\0')
+    {
+        return true;
     }
 
-    return true;
+    return false;
 }
 
 bool GLexer::nextToken()
@@ -54,6 +48,8 @@ bool GLexer::nextToken()
     if(m_currentChar == '\0')
     {
         token->m_type = TokenType::Eof;
+        m_tokenList.append(token);
+        return false;
     }
     else if(m_currentChar == '+')
     {
@@ -75,14 +71,24 @@ bool GLexer::nextToken()
         token->m_type = TokenType::Div;
         nextChar();
     }
-    else if(m_currentChar == "(")
+    else if(m_currentChar == '(')
     {
         token->m_type = TokenType::LeftParent;
         nextChar();
     }
-    else if(m_currentChar == ")")
+    else if(m_currentChar == ')')
     {
         token->m_type = TokenType::RightParent;
+        nextChar();
+    }
+    else if(m_currentChar == '=')
+    {
+        token->m_type = TokenType::Assign;
+        nextChar();
+    }
+    else if(m_currentChar == ';')
+    {
+        token->m_type = TokenType::Semicolon;
         nextChar();
     }
     else if(m_currentChar.isDigit())
@@ -93,6 +99,15 @@ bool GLexer::nextToken()
             nextChar();
         }while(m_currentChar.isDigit());
         token->m_context = m_source.mid(pos, m_cursor - pos -1);
+    }
+    else if(m_currentChar.isLetter())
+    {
+        token->m_type = TokenType::Identifier;
+        int pos = m_cursor - 1;
+        do{
+            nextChar();
+        }while(m_currentChar.isLetterOrNumber());
+        token->m_context = m_source.mid(pos, m_cursor - pos - 1);
     }
     else
     {
@@ -120,6 +135,7 @@ void GLexer::nextChar()
 
 void GLexer::printTokens()
 {
+    qDebug()<<"=========token list================";
     for(int i=0; i<m_tokenList.size(); ++i)
     {
         qDebug()<<(*m_tokenList.at(i));

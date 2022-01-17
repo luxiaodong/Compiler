@@ -22,12 +22,22 @@ void GExpressionNode::generateCode(GGenerateCode *genCode)
     genCode->expressionNode(this);
 }
 
+void GAssignNode::generateCode(GGenerateCode *genCode)
+{
+    genCode->assignNode(this);
+}
+
 void GBinaryNode::generateCode(GGenerateCode*  genCode)
 {
     genCode->binaryNode(this);
 }
 
-void GNumberNode::generateCode(GGenerateCode*  genCode)
+void GConstantNode::generateCode(GGenerateCode*  genCode)
 {
-    genCode->numberNode(this);
+    genCode->constantNode(this);
+}
+
+void GVariableNode::generateCode(GGenerateCode *genCode)
+{
+    genCode->variableNode(this);
 }

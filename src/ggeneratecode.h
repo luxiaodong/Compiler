@@ -13,8 +13,10 @@ public:
     void programNode(GProgramNode* node);
     void sentenceNode(GSentenceNode* node);
     void expressionNode(GExpressionNode* node);
+    void assignNode(GAssignNode* node);
     void binaryNode(GBinaryNode* node);
-    void numberNode(GNumberNode* node);
+    void constantNode(GConstantNode* node);
+    void variableNode(GVariableNode* node);
 
 private:
     void push();

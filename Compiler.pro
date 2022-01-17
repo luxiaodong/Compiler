@@ -14,10 +14,12 @@ SOURCES += main.cpp \
     src/glexer.cpp \
     src/gcompiler.cpp \
     src/gparser.cpp \
+    src/gsymboltable.cpp \
     src/gtoken.cpp \
     src/ggeneratecode.cpp \
     src/gsyntaxtree.cpp \
     src/gsyntaxnode.cpp \
+    src/gvariable.cpp \
     theory/gunrestrictedgrammar.cpp \
     theory/gcontextsensitivegrammar.cpp \
     theory/gcontextfreegrammar.cpp \
@@ -40,10 +42,12 @@ HEADERS += \
     src/glexer.h \
     src/gcompiler.h \
     src/gparser.h \
+    src/gsymboltable.h \
     src/gtoken.h \
     src/ggeneratecode.h \
     src/gsyntaxtree.h \
     src/gsyntaxnode.h \
+    src/gvariable.h \
     theory/gunrestrictedgrammar.h \
     theory/gcontextsensitivegrammar.h \
     theory/gcontextfreegrammar.h \

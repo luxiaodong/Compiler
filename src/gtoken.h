@@ -6,7 +6,6 @@
 #include <QDebug>
 
 enum TokenType{
-    Eof,
     Add,
     Sub,
     Mul,
@@ -14,6 +13,10 @@ enum TokenType{
     Num,
     LeftParent,
     RightParent,
+    Assign,
+    Semicolon,
+    Identifier,
+    Eof,
 };
 
 class GToken
