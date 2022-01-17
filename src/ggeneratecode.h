@@ -11,6 +11,8 @@ public:
     GGenerateCode();
     void printCode();
     void programNode(GProgramNode* node);
+    void sentenceNode(GSentenceNode* node);
+    void expressionNode(GExpressionNode* node);
     void binaryNode(GBinaryNode* node);
     void numberNode(GNumberNode* node);
 

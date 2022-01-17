@@ -11,7 +11,7 @@ GGenerateCode::GGenerateCode() : m_deep(0)
 void GGenerateCode::printCode()
 {
     qDebug().noquote()<<m_assemblyCode;
-    qDebug()<<m_deep;
+    qDebug()<<"deep is "<<m_deep;
 
     QString filePath = QDir::currentPath() + QString("/../Compiler/calculate/prog.s");
     QFile file(filePath);
@@ -32,12 +32,24 @@ void GGenerateCode::programNode(GProgramNode* node)
     m_assemblyCode += "\tmov %rsp, %rbp\n";
     m_assemblyCode += "\tsub $32, %rsp\n";
 
-    if(node->m_pLeftNode) node->m_pLeftNode->generateCode(this);
-    if(node->m_pRightNode) node->m_pRightNode->generateCode(this);
+    foreach(GSyntaxNode* sentence, node->m_sentenceList)
+    {
+        sentence->generateCode(this);
+    }
 
     m_assemblyCode += "\tmov %rbp, %rsp\n";
     m_assemblyCode += "\tpop %rbp\n";
     m_assemblyCode += "\tret\n";
+}
+
+void GGenerateCode::sentenceNode(GSentenceNode* node)
+{
+    node->m_pNode->generateCode(this);
+}
+
+void GGenerateCode::expressionNode(GExpressionNode* node)
+{
+    node->m_pNode->generateCode(this);
 }
 
 void GGenerateCode::binaryNode(GBinaryNode* node)

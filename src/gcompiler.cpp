@@ -42,10 +42,10 @@ void GCompiler::test()
 {
 //    this->readText("2*3");
 //    this->readText("5+1-3*4/2");
-//    this->readText("5+(1-3)*4/2");
+    this->readText("5+(1-3)*4/2");
 //    this->readText("5+a1+(1-3)*4/2");
 
-    GContextFreeGrammar parser;
-    parser.test();
+//    GContextFreeGrammar parser;
+//    parser.test();
 }
 

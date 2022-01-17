@@ -2,7 +2,7 @@
 #define GSYNTAXNODE_H
 
 #include "src/gtoken.h"
-#include <QStack>
+#include <QList>
 
 enum BinaryOperator{
     OP_Add,
@@ -16,14 +16,11 @@ class GGenerateCode;
 class GSyntaxNode
 {
 public:
-    GSyntaxNode(): m_pLeftNode(NULL), m_pRightNode(NULL), m_pToken(NULL) {}
+    GSyntaxNode(): m_pToken(NULL) {}
     virtual ~GSyntaxNode(){}
-    void traversal();
     virtual void generateCode(GGenerateCode*  genCode);
 
 public:
-    GSyntaxNode* m_pLeftNode;
-    GSyntaxNode* m_pRightNode;
     GToken* m_pToken;
 };
 
@@ -32,6 +29,29 @@ class GProgramNode : public GSyntaxNode
 public:
     virtual ~GProgramNode(){}
     virtual void generateCode(GGenerateCode*  genCode);
+
+public:
+    QList<GSyntaxNode*> m_sentenceList;
+};
+
+class GSentenceNode : public GSyntaxNode
+{
+public:
+    virtual ~GSentenceNode(){}
+    virtual void generateCode(GGenerateCode *genCode);
+
+public:
+    GSyntaxNode* m_pNode;
+};
+
+class GExpressionNode :  public GSyntaxNode
+{
+public:
+    virtual ~GExpressionNode(){}
+    virtual void generateCode(GGenerateCode *genCode);
+
+public:
+    GSyntaxNode* m_pNode;
 };
 
 //二元操作符
@@ -43,6 +63,8 @@ public:
 
 public:
     BinaryOperator m_binOp;
+    GSyntaxNode* m_pLeftNode;
+    GSyntaxNode* m_pRightNode;
 };
 
 class GNumberNode : public GSyntaxNode

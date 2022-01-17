@@ -15,6 +15,8 @@
 // num : digit
 //       (expression)
 
+// https://www.bilibili.com/read/cv6122366/
+
 class GParser
 {
 public:
@@ -24,6 +26,7 @@ public:
 
 private:
     GSyntaxNode* parseProgram();
+    GSyntaxNode* parseSentence();
     GSyntaxNode* parseExpression();
     GSyntaxNode* parseExpressionAdd();
     GSyntaxNode* parseExpressionMul();

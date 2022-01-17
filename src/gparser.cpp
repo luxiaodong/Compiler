@@ -14,20 +14,30 @@ bool GParser::analysis()
 {
     this->getNextToken();
     m_pTree->m_pRoot = this->parseProgram();
-    m_pTree->m_pRoot->traversal();
+//    m_pTree->m_pRoot->traversal();
     return true;
 }
 
 GSyntaxNode* GParser::parseProgram()
 {
     GProgramNode* node = new GProgramNode();
-    node->m_pLeftNode = this->parseExpression();
+    node->m_sentenceList.clear();
+    node->m_sentenceList.append(this->parseSentence());
+    return node;
+}
+
+GSyntaxNode* GParser::parseSentence()
+{
+    GSentenceNode* node = new GSentenceNode();
+    node->m_pNode = this->parseExpression();
     return node;
 }
 
 GSyntaxNode* GParser::parseExpression()
 {
-    return this->parseExpressionAdd();
+    GExpressionNode* node = new GExpressionNode();
+    node->m_pNode = this->parseExpressionAdd();
+    return node;
 }
 
 GSyntaxNode* GParser::parseExpressionAdd()

@@ -2,13 +2,6 @@
 #include "src/ggeneratecode.h"
 #include <QDebug>
 
-void GSyntaxNode::traversal()
-{
-    if(m_pRightNode) m_pRightNode->traversal();
-    if(m_pLeftNode) m_pLeftNode->traversal();
-    if(m_pToken) m_pToken->print();
-}
-
 void GSyntaxNode::generateCode(GGenerateCode*  genCode)
 {
     (void)genCode;
@@ -17,6 +10,16 @@ void GSyntaxNode::generateCode(GGenerateCode*  genCode)
 void GProgramNode::generateCode(GGenerateCode*  genCode)
 {
     genCode->programNode(this);
+}
+
+void GSentenceNode::generateCode(GGenerateCode *genCode)
+{
+    genCode->sentenceNode(this);
+}
+
+void GExpressionNode::generateCode(GGenerateCode *genCode)
+{
+    genCode->expressionNode(this);
 }
 
 void GBinaryNode::generateCode(GGenerateCode*  genCode)
