@@ -55,7 +55,7 @@ void GCompiler::test()
 //    this->readText("a=1;2+a;");
     this->readText("a=3;5+a*4/2-a;");
 
-//    GContextFreeGrammar parser;
-//    parser.test();
+    GContextFreeGrammar parser;
+    parser.test();
 }
 
