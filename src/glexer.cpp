@@ -85,6 +85,49 @@ bool GLexer::nextToken()
     {
         token->m_type = TokenType::Assign;
         nextChar();
+        if(m_currentChar == '=')
+        {
+            token->m_type = TokenType::Equal;
+            token->m_context += QString(m_currentChar);
+            nextChar();
+        }
+    }
+    else if(m_currentChar == '!')
+    {
+        nextChar();
+        if(m_currentChar == '=')
+        {
+            token->m_type = TokenType::NotEqual;
+            token->m_context += QString(m_currentChar);
+            nextChar();
+        }
+        else
+        {
+            QString msg = QString("line %1, row %2").arg(token->m_position.y()).arg(token->m_position.x());
+            Q_ASSERT_X(false, msg.toUtf8(), "unsupport operator !");
+        }
+    }
+    else if(m_currentChar == '>')
+    {
+        token->m_type = TokenType::Greater;
+        nextChar();
+        if(m_currentChar == '=')
+        {
+            token->m_type = TokenType::GreaterEqual;
+            token->m_context += QString(m_currentChar);
+            nextChar();
+        }
+    }
+    else if(m_currentChar == '<')
+    {
+        token->m_type = TokenType::Lesser;
+        nextChar();
+        if(m_currentChar == '=')
+        {
+            token->m_type = TokenType::LesserEqual;
+            token->m_context += QString(m_currentChar);
+            nextChar();
+        }
     }
     else if(m_currentChar == ';')
     {

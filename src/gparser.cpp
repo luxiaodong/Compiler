@@ -51,14 +51,67 @@ GSyntaxNode* GParser::parseExpression()
 
 GSyntaxNode* GParser::parseExpressionAssign()
 {
-    GSyntaxNode* left = this->parseExpressionAdd();
+    GSyntaxNode* left = this->parseExpressionEqual();
     if(m_pCurrentToken->m_type == TokenType::Assign)
     {
         this->getNextToken();
         GAssignNode* node = new GAssignNode();
         node->m_pLeftNode = left;
-        node->m_pRightNode = this->parseExpressionAssign();
+        node->m_pRightNode = this->parseExpressionEqual();
         return node;
+    }
+    return left;
+}
+
+GSyntaxNode* GParser::parseExpressionEqual()
+{
+    GSyntaxNode* left = this->parseExpressionRelation();
+    while(m_pCurrentToken->m_type == TokenType::Equal || m_pCurrentToken->m_type == TokenType::NotEqual)
+    {
+        BinaryOperator binOp = BinaryOperator::OP_Equal;
+        if(m_pCurrentToken->m_type == TokenType::NotEqual)
+        {
+            binOp = BinaryOperator::OP_NotEqual;
+        }
+
+        GBinaryNode* node = new GBinaryNode();
+        node->m_pToken = m_pCurrentToken;
+        this->getNextToken();
+        node->m_binOp = binOp;
+        node->m_pLeftNode = left;
+        node->m_pRightNode = this->parseExpressionRelation();
+        left = node;
+    }
+    return left;
+}
+
+GSyntaxNode* GParser::parseExpressionRelation()
+{
+    GSyntaxNode* left = this->parseExpressionAdd();
+    while(m_pCurrentToken->m_type == TokenType::Greater || m_pCurrentToken->m_type == TokenType::GreaterEqual
+        || m_pCurrentToken->m_type == TokenType::Lesser || m_pCurrentToken->m_type == TokenType::LesserEqual)
+    {
+        BinaryOperator binOp = BinaryOperator::OP_Greater;
+        if(m_pCurrentToken->m_type == TokenType::GreaterEqual)
+        {
+            binOp = BinaryOperator::OP_GreaterEqual;
+        }
+        else if(m_pCurrentToken->m_type == TokenType::Lesser)
+        {
+            binOp = BinaryOperator::OP_Lesser;
+        }
+        else if(m_pCurrentToken->m_type == TokenType::LesserEqual)
+        {
+            binOp = BinaryOperator::OP_LesserEqual;
+        }
+
+        GBinaryNode* node = new GBinaryNode();
+        node->m_pToken = m_pCurrentToken;
+        this->getNextToken();
+        node->m_binOp = binOp;
+        node->m_pLeftNode = left;
+        node->m_pRightNode = this->parseExpressionAdd();
+        left = node;
     }
     return left;
 }

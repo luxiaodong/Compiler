@@ -10,6 +10,12 @@ enum BinaryOperator{
     OP_Sub,
     OP_Mul,
     OP_Div,
+    OP_Equal,
+    OP_NotEqual,
+    OP_Greater,
+    OP_GreaterEqual,
+    OP_Lesser,
+    OP_LesserEqual,
 };
 
 class GGenerateCode;

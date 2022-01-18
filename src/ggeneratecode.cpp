@@ -31,7 +31,7 @@ void GGenerateCode::programNode(GProgramNode* node)
     m_assemblyCode += "\t.globl _prog\n";
     m_assemblyCode += "_prog:\n";
 
-    //给符号表设置地址.
+    //给符号表设置地址
     int stackSize = 0;
     foreach(GVariable* var, GSymbolTable::m_variables)
     {
@@ -95,6 +95,37 @@ void GGenerateCode::binaryNode(GBinaryNode* node)
         m_assemblyCode += "\tcqo\n";
         m_assemblyCode += "\tidiv %rdi\n";
         break;
+    case BinaryOperator::OP_Equal:
+        m_assemblyCode += "\tcmp %rdi, %rax\n";
+        m_assemblyCode += "\tsete %al\n";
+        m_assemblyCode += "\tmovzb %al, %rax\n";
+        break;
+    case BinaryOperator::OP_NotEqual:
+        m_assemblyCode += "\tcmp %rdi, %rax\n";
+        m_assemblyCode += "\tsetne %al\n";
+        m_assemblyCode += "\tmovzb %al, %rax\n";
+        break;
+    case BinaryOperator::OP_Greater:
+        m_assemblyCode += "\tcmp %rdi, %rax\n";
+        m_assemblyCode += "\tsetg %al\n";
+        m_assemblyCode += "\tmovzb %al, %rax\n";
+        break;
+    case BinaryOperator::OP_GreaterEqual:
+        m_assemblyCode += "\tcmp %rdi, %rax\n";
+        m_assemblyCode += "\tsetge %al\n";
+        m_assemblyCode += "\tmovzb %al, %rax\n";
+        break;
+    case BinaryOperator::OP_Lesser:
+        m_assemblyCode += "\tcmp %rdi, %rax\n";
+        m_assemblyCode += "\tsetl %al\n";
+        m_assemblyCode += "\tmovzb %al, %rax\n";
+        break;
+    case BinaryOperator::OP_LesserEqual:
+        m_assemblyCode += "\tcmp %rdi, %rax\n";
+        m_assemblyCode += "\tsetle %al\n";
+        m_assemblyCode += "\tmovzb %al, %rax\n";
+        break;
+
     default:
         Q_ASSERT(false);
         break;

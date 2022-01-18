@@ -17,6 +17,8 @@
 //         -> id|letter_
 //         -> id|dight
 
+// https://www.bilibili.com/read/cv6122366/
+
 class GRegularGraamar : public GContextFreeGrammar
 {
 public:

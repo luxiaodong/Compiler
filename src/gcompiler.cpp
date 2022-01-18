@@ -34,7 +34,6 @@ void GCompiler::readText(const QString& text)
     }
     lexer.printTokens();
 
-
     GParser parser(lexer);
     if(parser.analysis() == false)
     {
@@ -54,9 +53,12 @@ void GCompiler::test()
 //    this->readText("5+(1-3)*4/2");
 //    this->readText("a=1;2+a;");
 //    this->readText("a=3;5+a*4/2-a;");
-    this->readText("a=3;b=4;a*b*2;");
+//    this->readText("a=3;b=4;a*b*2;");
+//    this->readText("a=b=3;a*b;");
+//    this->readText("a=3;a==3;a!=3;a>3;a>=3;a<3;a<=3;");
+    this->readText("a=3;a<3;");
 
-    GContextFreeGrammar parser;
-    parser.test();
+//    GContextFreeGrammar parser;
+//    parser.test();
 }
 
