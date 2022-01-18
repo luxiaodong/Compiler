@@ -5,7 +5,7 @@
 #include <QTextStream>
 #include "src/gsymboltable.h"
 
-GGenerateCode::GGenerateCode() : m_deep(0)
+GGenerateCode::GGenerateCode() : m_deep(0) , m_conditionIndex(0)
 {
 }
 
@@ -59,9 +59,45 @@ void GGenerateCode::sentenceNode(GSentenceNode* node)
     node->m_pNode->generateCode(this);
 }
 
+void GGenerateCode::braceNode(GBraceNode* node)
+{
+    foreach(GSyntaxNode* sentence, node->m_sentenceList)
+    {
+        sentence->generateCode(this);
+    }
+}
+
 void GGenerateCode::expressionNode(GExpressionNode* node)
 {
     node->m_pNode->generateCode(this);
+}
+
+void GGenerateCode::conditionNode(GConditionNode* node)
+{
+    int n = m_conditionIndex++;
+    node->m_checkNode->generateCode(this);
+    m_assemblyCode += "\tcmp $0, %rax\n";
+
+    if(node->m_noNode)
+    {
+        m_assemblyCode += QString("\tje .L.else_%1\n").arg(n);
+    }
+    else
+    {
+        m_assemblyCode += QString("\tje .L.end_%1\n").arg(n);
+    }
+
+    node->m_yesNode->generateCode(this);
+    m_assemblyCode += QString("\tjmp .L.end_%1\n").arg(n);
+
+    if(node->m_noNode)
+    {
+        m_assemblyCode += QString(".L.else_%1:\n").arg(n);
+        node->m_noNode->generateCode(this);
+        m_assemblyCode += QString("\tjmp .L.end_%1\n").arg(n);
+    }
+
+    m_assemblyCode += QString(".L.end_%1:\n").arg(n);
 }
 
 void GGenerateCode::assignNode(GAssignNode* node)

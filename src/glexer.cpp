@@ -81,6 +81,16 @@ bool GLexer::nextToken()
         token->m_type = TokenType::RightParent;
         nextChar();
     }
+    else if(m_currentChar == '{')
+    {
+        token->m_type = TokenType::LeftBrace;
+        nextChar();
+    }
+    else if(m_currentChar == '}')
+    {
+        token->m_type = TokenType::RightBrace;
+        nextChar();
+    }
     else if(m_currentChar == '=')
     {
         token->m_type = TokenType::Assign;
@@ -151,6 +161,15 @@ bool GLexer::nextToken()
             nextChar();
         }while(m_currentChar.isLetterOrNumber());
         token->m_context = m_source.mid(pos, m_cursor - pos - 1);
+
+        if(token->m_context == QString("if"))
+        {
+            token->m_type = TokenType::If;
+        }
+        else if(token->m_context == QString("else"))
+        {
+            token->m_type = TokenType::Else;
+        }
     }
     else
     {
@@ -184,3 +203,11 @@ void GLexer::printTokens()
         qDebug()<<(*m_tokenList.at(i));
     }
 }
+
+bool GLexer::isKeyword(const QString& str) const
+{
+    static QStringList keys = (QStringList()<<"auto"<<"double"<<"int"<<"struct"<<"break"<<"else"<<"long"<<"switch"<<"case"<<"enum"<<"register"<<"typedef"<<"char"<<"extern"<<"return"<<"union"<<"const"<<"float"<<"short"<<"unsigned"<<"for"<<"signed"<<"void"<<"default"<<"goto"<<"sizeof"<<"volatile"<<"do"<<"if"<<"static"<<"while"<<"continue");
+    if (keys.indexOf(str) == -1) return false;
+    return true;
+}
+

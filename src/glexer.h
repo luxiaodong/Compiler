@@ -17,6 +17,7 @@ public:
 private:
     void nextChar();
     bool nextToken();
+    bool isKeyword(const QString& str) const;
 
 public:
     QList<GToken*> m_tokenList;

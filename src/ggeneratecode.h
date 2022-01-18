@@ -12,7 +12,9 @@ public:
     void printCode();
     void programNode(GProgramNode* node);
     void sentenceNode(GSentenceNode* node);
+    void braceNode(GBraceNode* node);
     void expressionNode(GExpressionNode* node);
+    void conditionNode(GConditionNode* node);
     void assignNode(GAssignNode* node);
     void binaryNode(GBinaryNode* node);
     void constantNode(GConstantNode* node);
@@ -25,6 +27,7 @@ private:
 private:
     QString m_assemblyCode;
     int m_deep;
+    int m_conditionIndex;
 };
 
 #endif // GGENERATECODE_H

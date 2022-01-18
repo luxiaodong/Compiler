@@ -61,6 +61,26 @@ public:
     GSyntaxNode* m_pNode;
 };
 
+class GBraceNode : public GSyntaxNode
+{
+public:
+    virtual ~GBraceNode(){}
+    virtual void generateCode(GGenerateCode *genCode);
+public:
+    QList<GSyntaxNode*> m_sentenceList;
+};
+
+class GConditionNode : public GSyntaxNode
+{
+public:
+    virtual ~GConditionNode(){}
+    virtual void generateCode(GGenerateCode *genCode);
+public:
+    GSyntaxNode* m_checkNode;
+    GSyntaxNode* m_yesNode;
+    GSyntaxNode* m_noNode; //可选.
+};
+
 class GAssignNode : public GSyntaxNode
 {
 public:

@@ -22,6 +22,10 @@ enum TokenType{
     LesserEqual,
     Semicolon,
     Identifier,
+    If,
+    Else,
+    LeftBrace,
+    RightBrace,
     Eof,
 };
 

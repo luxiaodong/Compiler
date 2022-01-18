@@ -56,7 +56,8 @@ void GCompiler::test()
 //    this->readText("a=3;b=4;a*b*2;");
 //    this->readText("a=b=3;a*b;");
 //    this->readText("a=3;a==3;a!=3;a>3;a>=3;a<3;a<=3;");
-    this->readText("a=3;a<3;");
+//    this->readText("a=3;a<3;");
+    this->readText("a=3; if(a!=2) {b=1; if (b==1) b=2; else b=3; b*a;}");
 
 //    GContextFreeGrammar parser;
 //    parser.test();

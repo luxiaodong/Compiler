@@ -25,16 +25,48 @@ GSyntaxNode* GParser::parseProgram()
     {
         node->m_sentenceList.append(this->parseSentence());
     }
-
+    Q_ASSERT(m_pCurrentToken->m_type == TokenType::Eof);
     return node;
 }
 
 GSyntaxNode* GParser::parseSentence()
 {
+    if(m_pCurrentToken->m_type == TokenType::If)
+    {
+        GConditionNode* node = new GConditionNode();
+        this->getNextToken();
+        Q_ASSERT(m_pCurrentToken->m_type == TokenType::LeftParent);
+        this->getNextToken();
+        node->m_checkNode = this->parseExpression();
+        Q_ASSERT(m_pCurrentToken->m_type == TokenType::RightParent);
+        this->getNextToken();
+        node->m_yesNode =  this->parseSentence();
+        if(m_pCurrentToken->m_type == TokenType::Else)
+        {
+            this->getNextToken();
+            node->m_noNode = this->parseSentence();
+        }
+        return node;
+    }
+    else if(m_pCurrentToken->m_type == TokenType::LeftBrace)
+    {
+        GBraceNode* node = new GBraceNode();
+        this->getNextToken();
+        node->m_sentenceList.clear();
+        while(m_pCurrentToken->m_type != TokenType::RightBrace)
+        {
+            node->m_sentenceList.append(this->parseSentence());
+        }
+        Q_ASSERT(m_pCurrentToken->m_type == TokenType::RightBrace);
+        this->getNextToken();
+        return node;
+    }
+
     GSentenceNode* node = new GSentenceNode();
     node->m_pNode = this->parseExpression();
     if(m_pCurrentToken->m_type != TokenType::Semicolon)
     {
+        qDebug()<<m_pCurrentToken->m_context;
         QString msg = QString("line %1, row %2").arg(m_pCurrentToken->m_position.y()).arg(m_pCurrentToken->m_position.x());
         Q_ASSERT_X(false,msg.toUtf8(),"miss ;");
     }
@@ -181,6 +213,7 @@ GSyntaxNode* GParser::parseConstant()
     {
         this->getNextToken();
         GSyntaxNode* node = this->parseExpression();
+        Q_ASSERT(m_pCurrentToken->m_type == TokenType::RightParent);
         this->getNextToken();
         return node;
     }

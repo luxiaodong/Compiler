@@ -22,6 +22,16 @@ void GExpressionNode::generateCode(GGenerateCode *genCode)
     genCode->expressionNode(this);
 }
 
+void GBraceNode::generateCode(GGenerateCode *genCode)
+{
+    genCode->braceNode(this);
+}
+
+void GConditionNode::generateCode(GGenerateCode *genCode)
+{
+    genCode->conditionNode(this);
+}
+
 void GAssignNode::generateCode(GGenerateCode *genCode)
 {
     genCode->assignNode(this);
