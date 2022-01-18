@@ -14,6 +14,7 @@ public:
     void sentenceNode(GSentenceNode* node);
     void braceNode(GBraceNode* node);
     void expressionNode(GExpressionNode* node);
+    void whileNode(GWhileNode* node);
     void conditionNode(GConditionNode* node);
     void assignNode(GAssignNode* node);
     void binaryNode(GBinaryNode* node);

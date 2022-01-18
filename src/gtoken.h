@@ -26,6 +26,7 @@ enum TokenType{
     Else,
     LeftBrace,
     RightBrace,
+    While,
     Eof,
 };
 

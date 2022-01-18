@@ -27,6 +27,11 @@ void GBraceNode::generateCode(GGenerateCode *genCode)
     genCode->braceNode(this);
 }
 
+void GWhileNode::generateCode(GGenerateCode *genCode)
+{
+    genCode->whileNode(this);
+}
+
 void GConditionNode::generateCode(GGenerateCode *genCode)
 {
     genCode->conditionNode(this);

@@ -70,6 +70,16 @@ public:
     QList<GSyntaxNode*> m_sentenceList;
 };
 
+class GWhileNode : public GSyntaxNode
+{
+public:
+    virtual ~GWhileNode(){}
+    virtual void generateCode(GGenerateCode *genCode);
+public:
+    GSyntaxNode* m_checkNode;
+    GSyntaxNode* m_braceNode;
+};
+
 class GConditionNode : public GSyntaxNode
 {
 public:

@@ -170,6 +170,10 @@ bool GLexer::nextToken()
         {
             token->m_type = TokenType::Else;
         }
+        else if(token->m_context == QString("while"))
+        {
+            token->m_type = TokenType::While;
+        }
     }
     else
     {

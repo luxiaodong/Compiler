@@ -72,7 +72,22 @@ void GGenerateCode::braceNode(GBraceNode* node)
 
 void GGenerateCode::expressionNode(GExpressionNode* node)
 {
-    node->m_pNode->generateCode(this);
+    if(node->m_pNode)
+    {
+        node->m_pNode->generateCode(this);
+    }
+}
+
+void GGenerateCode::whileNode(GWhileNode* node)
+{
+    int n = m_conditionIndex++;
+    m_assemblyCode += QString(".L.begin_%1:\n").arg(n);
+    node->m_checkNode->generateCode(this);
+    m_assemblyCode += "\tcmp $0, %rax\n";
+    m_assemblyCode += QString("\tje .L.end_%1\n").arg(n);
+    node->m_braceNode->generateCode(this);
+    m_assemblyCode += QString("\tjmp .L.begin_%1\n").arg(n);
+    m_assemblyCode += QString(".L.end_%1:\n").arg(n);
 }
 
 void GGenerateCode::conditionNode(GConditionNode* node)

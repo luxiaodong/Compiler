@@ -48,6 +48,18 @@ GSyntaxNode* GParser::parseSentence()
         }
         return node;
     }
+    else if(m_pCurrentToken->m_type == TokenType::While)
+    {
+        GWhileNode* node = new GWhileNode();
+        this->getNextToken();
+        Q_ASSERT(m_pCurrentToken->m_type == TokenType::LeftParent);
+        this->getNextToken();
+        node->m_checkNode = this->parseExpression();
+        Q_ASSERT(m_pCurrentToken->m_type == TokenType::RightParent);
+        this->getNextToken();
+        node->m_braceNode = this->parseSentence();
+        return node;
+    }
     else if(m_pCurrentToken->m_type == TokenType::LeftBrace)
     {
         GBraceNode* node = new GBraceNode();
