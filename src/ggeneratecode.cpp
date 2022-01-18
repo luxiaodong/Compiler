@@ -56,7 +56,10 @@ void GGenerateCode::programNode(GProgramNode* node)
 
 void GGenerateCode::sentenceNode(GSentenceNode* node)
 {
-    node->m_pNode->generateCode(this);
+    if(node->m_pNode)
+    {
+        node->m_pNode->generateCode(this);
+    }
 }
 
 void GGenerateCode::braceNode(GBraceNode* node)

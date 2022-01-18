@@ -63,13 +63,16 @@ GSyntaxNode* GParser::parseSentence()
     }
 
     GSentenceNode* node = new GSentenceNode();
-    node->m_pNode = this->parseExpression();
     if(m_pCurrentToken->m_type != TokenType::Semicolon)
     {
-        qDebug()<<m_pCurrentToken->m_context;
-        QString msg = QString("line %1, row %2").arg(m_pCurrentToken->m_position.y()).arg(m_pCurrentToken->m_position.x());
-        Q_ASSERT_X(false,msg.toUtf8(),"miss ;");
+        node->m_pNode = this->parseExpression();
     }
+    else
+    {
+        node->m_pNode = NULL;
+    }
+
+    Q_ASSERT(m_pCurrentToken->m_type == TokenType::Semicolon);
     this->getNextToken();
     return node;
 }
@@ -208,8 +211,7 @@ GSyntaxNode* GParser::parseExpressionMul()
 
 GSyntaxNode* GParser::parseConstant()
 {
-    // todo check point.
-    if(m_pCurrentToken && m_pCurrentToken->m_type == TokenType::LeftParent)
+    if(m_pCurrentToken->m_type == TokenType::LeftParent)
     {
         this->getNextToken();
         GSyntaxNode* node = this->parseExpression();
