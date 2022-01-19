@@ -80,6 +80,28 @@ public:
     GSyntaxNode* m_braceNode;
 };
 
+class GDoWhileNode : public GSyntaxNode
+{
+public:
+    virtual ~GDoWhileNode(){}
+    virtual void generateCode(GGenerateCode *genCode) override;
+public:
+    GSyntaxNode* m_checkNode;
+    GSyntaxNode* m_braceNode;
+};
+
+class GForLoopNode : public GSyntaxNode
+{
+public:
+    virtual ~GForLoopNode(){}
+    virtual void generateCode(GGenerateCode *genCode) override;
+public:
+    GSyntaxNode* m_initNode;
+    GSyntaxNode* m_checkNode;
+    GSyntaxNode* m_incNode;
+    GSyntaxNode* m_braceNode;
+};
+
 class GConditionNode : public GSyntaxNode
 {
 public:

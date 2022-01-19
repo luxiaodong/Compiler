@@ -32,6 +32,16 @@ void GWhileNode::generateCode(GGenerateCode *genCode)
     genCode->whileNode(this);
 }
 
+void GDoWhileNode::generateCode(GGenerateCode *genCode)
+{
+    genCode->dowhileNode(this);
+}
+
+void GForLoopNode::generateCode(GGenerateCode *genCode)
+{
+    genCode->forloopNode(this);
+}
+
 void GConditionNode::generateCode(GGenerateCode *genCode)
 {
     genCode->conditionNode(this);

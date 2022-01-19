@@ -90,6 +90,41 @@ void GGenerateCode::whileNode(GWhileNode* node)
     m_assemblyCode += QString(".L.end_%1:\n").arg(n);
 }
 
+void GGenerateCode::dowhileNode(GDoWhileNode* node)
+{
+    int n = m_conditionIndex++;
+    m_assemblyCode += QString(".L.begin_%1:\n").arg(n);
+    node->m_braceNode->generateCode(this);
+    node->m_checkNode->generateCode(this);
+    m_assemblyCode += QString("\tcmp $0, %rax\n");
+    m_assemblyCode += QString("\tje .L.end_%1\n").arg(n);
+    m_assemblyCode += QString("\tjmp .L.begin_%1\n").arg(n);
+    m_assemblyCode += QString(".L.end_%1:\n").arg(n);
+}
+
+void GGenerateCode::forloopNode(GForLoopNode* node)
+{
+    int n = m_conditionIndex++;
+    if(node->m_initNode)
+    {
+        node->m_initNode->generateCode(this);
+    }
+    m_assemblyCode += QString(".L.begin_%1:\n").arg(n);
+    if(node->m_checkNode)
+    {
+        node->m_checkNode->generateCode(this);
+        m_assemblyCode += QString("\tcmp $0, %rax\n");
+        m_assemblyCode += QString("\tje .L.end_%1\n").arg(n);
+    }
+    node->m_braceNode->generateCode(this);
+    if(node->m_incNode)
+    {
+        node->m_incNode->generateCode(this);
+    }
+    m_assemblyCode += QString("\tjmp .L.begin_%1\n").arg(n);
+    m_assemblyCode += QString(".L.end_%1:\n").arg(n);
+}
+
 void GGenerateCode::conditionNode(GConditionNode* node)
 {
     int n = m_conditionIndex++;

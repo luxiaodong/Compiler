@@ -27,6 +27,8 @@ enum TokenType{
     LeftBrace,
     RightBrace,
     While,
+    Do,
+    For,
     Eof,
 };
 

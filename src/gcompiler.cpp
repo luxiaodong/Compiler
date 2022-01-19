@@ -59,8 +59,9 @@ void GCompiler::test()
 //    this->readText("a=3;a<3;");
 //    this->readText("a=3; if(a!=2) {b=1; if (b==1) b=2; else b=3; b*a;}");
 //    this->readText(";");
-    this->readText("s=0;i=0;while(i<10){s = s + i; i = i + 1;} s;");
-
+//    this->readText("s=0;i=0;while(i<10){s=s+i;i=i+1;} s;");
+//    this->readText("s=0;i=0;do{s=s+i;i=i+1;}while(i<11); s;");
+    this->readText("s=0;for(i=0;i<10;i=i+1) s=s+i; s;");
 
 //    GContextFreeGrammar parser;
 //    parser.test();

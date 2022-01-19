@@ -60,6 +60,61 @@ GSyntaxNode* GParser::parseSentence()
         node->m_braceNode = this->parseSentence();
         return node;
     }
+    else if(m_pCurrentToken->m_type == TokenType::Do)
+    {
+        GDoWhileNode* node = new GDoWhileNode();
+        this->getNextToken();
+        node->m_braceNode = this->parseSentence();
+        Q_ASSERT(m_pCurrentToken->m_type == TokenType::While);
+        this->getNextToken();
+        Q_ASSERT(m_pCurrentToken->m_type == TokenType::LeftParent);
+        this->getNextToken();
+        node->m_checkNode = this->parseExpression();
+        Q_ASSERT(m_pCurrentToken->m_type == TokenType::RightParent);
+        this->getNextToken();
+        Q_ASSERT(m_pCurrentToken->m_type == TokenType::Semicolon);
+        this->getNextToken();
+        return node;
+    }
+    else if(m_pCurrentToken->m_type == TokenType::For)
+    {
+        GForLoopNode* node = new GForLoopNode();
+        this->getNextToken();
+        Q_ASSERT(m_pCurrentToken->m_type == TokenType::LeftParent);
+        this->getNextToken();
+        if(m_pCurrentToken->m_type == TokenType::Semicolon) //可能是直接分号,没有语句
+        {
+            node->m_initNode = NULL;
+        }
+        else
+        {
+            node->m_initNode = this->parseExpression();
+        }
+        Q_ASSERT(m_pCurrentToken->m_type == TokenType::Semicolon);
+        this->getNextToken();
+        if(m_pCurrentToken->m_type == TokenType::Semicolon)
+        {
+            node->m_checkNode = NULL;
+        }
+        else
+        {
+            node->m_checkNode = this->parseExpression();
+        }
+        Q_ASSERT(m_pCurrentToken->m_type == TokenType::Semicolon);
+        this->getNextToken();
+        if(m_pCurrentToken->m_type == TokenType::RightParent)
+        {
+            node->m_incNode = NULL;
+        }
+        else
+        {
+            node->m_incNode = this->parseExpression();
+        }
+        Q_ASSERT(m_pCurrentToken->m_type == TokenType::RightParent);
+        this->getNextToken();
+        node->m_braceNode = this->parseSentence();
+        return node;
+    }
     else if(m_pCurrentToken->m_type == TokenType::LeftBrace)
     {
         GBraceNode* node = new GBraceNode();
@@ -84,6 +139,7 @@ GSyntaxNode* GParser::parseSentence()
         node->m_pNode = NULL;
     }
 
+//    qDebug()<<m_pCurrentToken->m_context;
     Q_ASSERT(m_pCurrentToken->m_type == TokenType::Semicolon);
     this->getNextToken();
     return node;

@@ -15,6 +15,8 @@ public:
     void braceNode(GBraceNode* node);
     void expressionNode(GExpressionNode* node);
     void whileNode(GWhileNode* node);
+    void dowhileNode(GDoWhileNode* node);
+    void forloopNode(GForLoopNode* node);
     void conditionNode(GConditionNode* node);
     void assignNode(GAssignNode* node);
     void binaryNode(GBinaryNode* node);

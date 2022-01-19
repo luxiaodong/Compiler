@@ -174,6 +174,14 @@ bool GLexer::nextToken()
         {
             token->m_type = TokenType::While;
         }
+        else if(token->m_context == QString("do"))
+        {
+            token->m_type = TokenType::Do;
+        }
+        else if(token->m_context == QString("for"))
+        {
+            token->m_type = TokenType::For;
+        }
     }
     else
     {
