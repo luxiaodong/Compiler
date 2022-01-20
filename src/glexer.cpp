@@ -144,6 +144,11 @@ bool GLexer::nextToken()
         token->m_type = TokenType::Semicolon;
         nextChar();
     }
+    else if(m_currentChar == ',')
+    {
+        token->m_type = TokenType::Comma;
+        nextChar();
+    }
     else if(m_currentChar.isDigit())
     {
         token->m_type = TokenType::Num;
@@ -181,6 +186,10 @@ bool GLexer::nextToken()
         else if(token->m_context == QString("for"))
         {
             token->m_type = TokenType::For;
+        }
+        else if(token->m_context == QString("return"))
+        {
+            token->m_type = TokenType::Return;
         }
     }
     else

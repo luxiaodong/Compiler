@@ -12,6 +12,21 @@ void GProgramNode::generateCode(GGenerateCode*  genCode)
     genCode->programNode(this);
 }
 
+void GFunctionNode::generateCode(GGenerateCode*  genCode)
+{
+    genCode->functionNode(this);
+}
+
+void GFunctionCallNode::generateCode(GGenerateCode *genCode)
+{
+    genCode->functionCallNode(this);
+}
+
+void GReturnNode::generateCode(GGenerateCode *genCode)
+{
+    genCode->returnNode(this);
+}
+
 void GSentenceNode::generateCode(GGenerateCode *genCode)
 {
     genCode->sentenceNode(this);

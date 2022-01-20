@@ -16,6 +16,8 @@ public:
 
 private:
     GSyntaxNode* parseProgram();
+    GSyntaxNode* parseFunction();
+    GSyntaxNode* parseFunctionCall();
     GSyntaxNode* parseSentence();
     GSyntaxNode* parseExpression();
     GSyntaxNode* parseExpressionEqual();
@@ -27,6 +29,7 @@ private:
 
 private:
     void getNextToken();
+    GToken* lookNextToken();
 
 public:
     GSyntaxTree* m_pTree;

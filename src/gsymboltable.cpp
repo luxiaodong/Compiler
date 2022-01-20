@@ -16,6 +16,16 @@ void GSymbolTable::addVariable(QString name)
     m_variables.append(var);
 }
 
+GVariable* GSymbolTable::getVariable(QString name)
+{
+    foreach(GVariable* var, m_variables)
+    {
+        if(var->m_name == name) return var;
+    }
+
+    return NULL;
+}
+
 int GSymbolTable::getAddress(QString name)
 {
     foreach(GVariable* var, m_variables)

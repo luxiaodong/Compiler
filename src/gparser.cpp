@@ -20,12 +20,83 @@ bool GParser::analysis()
 GSyntaxNode* GParser::parseProgram()
 {
     GProgramNode* node = new GProgramNode();
-    node->m_sentenceList.clear();
+    node->m_functionList.clear();
     while(m_pCurrentToken->m_type != TokenType::Eof)
     {
-        node->m_sentenceList.append(this->parseSentence());
+        node->m_functionList.append(this->parseFunction());
     }
     Q_ASSERT(m_pCurrentToken->m_type == TokenType::Eof);
+    return node;
+}
+
+GSyntaxNode* GParser::parseFunction()
+{
+    if(m_pCurrentToken->m_type == TokenType::Identifier)
+    {
+        GFunctionNode* node = new GFunctionNode();
+        node->m_funcName = m_pCurrentToken->m_context; //函数名
+        this->getNextToken();
+        Q_ASSERT(m_pCurrentToken->m_type == TokenType::LeftParent);
+        this->getNextToken();
+        if(m_pCurrentToken->m_type != TokenType::RightParent) //有参数
+        {
+            Q_ASSERT(m_pCurrentToken->m_type == TokenType::Identifier);
+            while(true)
+            {
+                QString name = m_pCurrentToken->m_context;
+                GSymbolTable::addVariable(name); //添加到符号表
+                GVariable* var = GSymbolTable::getVariable(name);
+                node->m_args.append(var);
+                this->getNextToken();
+
+                if(m_pCurrentToken->m_type != TokenType::Comma)
+                {
+                    break;
+                }
+            }
+        }
+        Q_ASSERT(m_pCurrentToken->m_type == TokenType::RightParent);
+        this->getNextToken();
+        Q_ASSERT(m_pCurrentToken->m_type == TokenType::LeftBrace);
+        // node->m_braceNode = this->parseSentence();
+
+        this->getNextToken();
+        node->m_sentenceList.clear();
+        while(m_pCurrentToken->m_type != TokenType::RightBrace)
+        {
+//            qDebug()<<m_pCurrentToken->m_context;
+            node->m_sentenceList.append(this->parseSentence());
+        }
+
+        Q_ASSERT(m_pCurrentToken->m_type == TokenType::RightBrace);
+        this->getNextToken();
+        return node;
+    }
+
+    Q_ASSERT(false);
+    return NULL;
+}
+
+GSyntaxNode* GParser::parseFunctionCall()
+{
+    GFunctionCallNode* node = new GFunctionCallNode();
+    node->m_funcName = m_pCurrentToken->m_context;
+    Q_ASSERT(m_pCurrentToken->m_type == TokenType::Identifier);
+    this->getNextToken();
+    Q_ASSERT(m_pCurrentToken->m_type == TokenType::LeftParent);
+    this->getNextToken();
+    if(m_pCurrentToken->m_type != TokenType::RightParent) //有参数
+    {
+        node->m_argsList.append( this->parseExpressionAssign() );
+        while( m_pCurrentToken->m_type == TokenType::Comma )
+        {
+            this->getNextToken();
+            node->m_argsList.append( this->parseExpressionAssign() );
+        }
+    }
+    Q_ASSERT(m_pCurrentToken->m_type == TokenType::RightParent);
+    this->getNextToken();
+    Q_ASSERT(m_pCurrentToken->m_type == TokenType::Semicolon);
     return node;
 }
 
@@ -64,6 +135,7 @@ GSyntaxNode* GParser::parseSentence()
     {
         GDoWhileNode* node = new GDoWhileNode();
         this->getNextToken();
+        Q_ASSERT(m_pCurrentToken->m_type == TokenType::LeftBrace); //do后面必跟{
         node->m_braceNode = this->parseSentence();
         Q_ASSERT(m_pCurrentToken->m_type == TokenType::While);
         this->getNextToken();
@@ -128,6 +200,16 @@ GSyntaxNode* GParser::parseSentence()
         this->getNextToken();
         return node;
     }
+    else if(m_pCurrentToken->m_type == TokenType::Return)
+    {
+        GReturnNode* node = new GReturnNode();
+        this->getNextToken();
+        node->m_pNode = this->parseExpression();
+//        qDebug()<<m_pCurrentToken->m_context;
+        Q_ASSERT(m_pCurrentToken->m_type == TokenType::Semicolon);
+        this->getNextToken();
+        return node;
+    }
 
     GSentenceNode* node = new GSentenceNode();
     if(m_pCurrentToken->m_type != TokenType::Semicolon)
@@ -139,7 +221,7 @@ GSyntaxNode* GParser::parseSentence()
         node->m_pNode = NULL;
     }
 
-//    qDebug()<<m_pCurrentToken->m_context;
+    qDebug()<<m_pCurrentToken->m_context;
     Q_ASSERT(m_pCurrentToken->m_type == TokenType::Semicolon);
     this->getNextToken();
     return node;
@@ -289,6 +371,12 @@ GSyntaxNode* GParser::parseConstant()
     }
     else if(m_pCurrentToken->m_type == TokenType::Identifier)
     {
+        GToken* nextToken = this->lookNextToken();
+        if(nextToken->m_type == TokenType::LeftParent) //这里假设函数调用
+        {
+            return this->parseFunctionCall();
+        }
+
         GVariableNode* node = new GVariableNode();
         node->m_pToken = m_pCurrentToken;
         node->m_name = m_pCurrentToken->m_context;
@@ -315,4 +403,14 @@ void GParser::getNextToken()
     {
         m_pCurrentToken = NULL;
     }
+}
+
+GToken* GParser::lookNextToken()
+{
+    if(m_tokenIndex < m_lexer.m_tokenList.size())
+    {
+        return m_lexer.m_tokenList.at(m_tokenIndex);
+    }
+
+    return NULL;
 }

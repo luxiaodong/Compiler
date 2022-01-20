@@ -38,7 +38,40 @@ public:
     virtual void generateCode(GGenerateCode*  genCode);
 
 public:
+    QList<GSyntaxNode*> m_functionList;
+};
+
+class GFunctionNode : public GSyntaxNode
+{
+public:
+    virtual ~GFunctionNode(){}
+    virtual void generateCode(GGenerateCode *genCode);
+
+public:
+    QString m_funcName;
+    QList<GVariable*> m_args;
+    QList<GVariable*> m_locals; //局部变量
+//    GSyntaxNode* m_braceNode;
     QList<GSyntaxNode*> m_sentenceList;
+};
+
+class GFunctionCallNode : public GSyntaxNode
+{
+public:
+    virtual ~GFunctionCallNode(){}
+    virtual void generateCode(GGenerateCode *genCode);
+public:
+    QString m_funcName;
+    QList<GSyntaxNode*> m_argsList;
+};
+
+class GReturnNode : public GSyntaxNode
+{
+public:
+    virtual ~GReturnNode(){}
+    virtual void generateCode(GGenerateCode *genCode);
+public:
+    GSyntaxNode* m_pNode;
 };
 
 class GSentenceNode : public GSyntaxNode

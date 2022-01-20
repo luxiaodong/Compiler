@@ -2,7 +2,6 @@
 
 GContextFreeGrammar::GContextFreeGrammar()
 {
-
 }
 
 void GContextFreeGrammar::test()

@@ -29,6 +29,8 @@ enum TokenType{
     While,
     Do,
     For,
+    Comma,
+    Return,
     Eof,
 };
 

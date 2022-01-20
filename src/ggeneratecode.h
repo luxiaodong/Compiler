@@ -11,6 +11,9 @@ public:
     GGenerateCode();
     void printCode();
     void programNode(GProgramNode* node);
+    void functionNode(GFunctionNode* node);
+    void functionCallNode(GFunctionCallNode* node);
+    void returnNode(GReturnNode* node);
     void sentenceNode(GSentenceNode* node);
     void braceNode(GBraceNode* node);
     void expressionNode(GExpressionNode* node);
@@ -26,9 +29,11 @@ public:
 private:
     void push();
     void pop(QString reg);
+    int alignTo(int size, int align);
 
 private:
     QString m_assemblyCode;
+    QString m_currentFuncName;
     int m_deep;
     int m_conditionIndex;
 };
