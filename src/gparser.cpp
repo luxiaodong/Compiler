@@ -96,7 +96,7 @@ GSyntaxNode* GParser::parseFunctionCall()
     }
     Q_ASSERT(m_pCurrentToken->m_type == TokenType::RightParent);
     this->getNextToken();
-    Q_ASSERT(m_pCurrentToken->m_type == TokenType::Semicolon);
+//    Q_ASSERT(m_pCurrentToken->m_type == TokenType::Semicolon); // 函数后面不一定是; 也可能是+
     return node;
 }
 
