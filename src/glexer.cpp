@@ -25,14 +25,14 @@ bool GLexer::nextToken()
     bool isSpaceOrNewLine = true;
     while(isSpaceOrNewLine)
     {
-        if(m_currentChar.isSpace())
-        {
-            this->nextChar();
-        }
-        else if(m_currentChar == '\n')
+        if(m_currentChar == '\n')
         {
             m_line++;
             m_lineCursor = m_cursor;
+            this->nextChar();
+        }
+        else if(m_currentChar.isSpace())
+        {
             this->nextChar();
         }
         else
@@ -70,6 +70,46 @@ bool GLexer::nextToken()
     {
         token->m_type = TokenType::Div;
         nextChar();
+
+        if(m_currentChar == '/') //注释
+        {
+            delete token;
+            while(true)
+            {
+                nextChar();
+                if(m_currentChar == '\n')
+                {
+                    return true;
+                }
+
+                if(m_currentChar == '\0')
+                {
+                    return false;
+                }
+            }
+        }
+        else if(m_currentChar == '*')
+        {
+            delete token;
+            while(true)
+            {
+                nextChar();
+                if(m_currentChar == '*')
+                {
+                    nextChar();
+                    if(m_currentChar == '/')
+                    {
+                        nextChar();
+                        return true;
+                    }
+                }
+
+                if(m_currentChar == '\0')
+                {
+                    return false;
+                }
+            }
+        }
     }
     else if(m_currentChar == '(')
     {
@@ -198,6 +238,7 @@ bool GLexer::nextToken()
         return false;
     }
 
+//    qDebug()<<token->m_context;
     m_tokenList.append(token);
     return true;
 }
