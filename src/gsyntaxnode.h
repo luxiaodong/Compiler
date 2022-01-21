@@ -158,6 +158,15 @@ public:
     GSyntaxNode* m_pRightNode;
 };
 
+class GDeclarationNode : public GSyntaxNode
+{
+public:
+    virtual ~GDeclarationNode(){}
+    virtual void generateCode(GGenerateCode *genCode);
+public:
+    QList<GSyntaxNode*> m_assignList;
+};
+
 //二元操作符
 class GBinaryNode : public GSyntaxNode
 {

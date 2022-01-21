@@ -34,6 +34,7 @@ private:
     GType* parseTypeSuffix(GType* pType);
 
 private:
+    bool isValidType(TokenType type);
     void getNextToken();
     GToken* lookNextToken();
 

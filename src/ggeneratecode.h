@@ -22,6 +22,7 @@ public:
     void forloopNode(GForLoopNode* node);
     void conditionNode(GConditionNode* node);
     void assignNode(GAssignNode* node);
+    void declarationNode(GDeclarationNode* node);
     void binaryNode(GBinaryNode* node);
     void constantNode(GConstantNode* node);
     void variableNode(GVariableNode* node);

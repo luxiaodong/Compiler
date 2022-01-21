@@ -205,6 +205,14 @@ void GGenerateCode::assignNode(GAssignNode* node)
     m_assemblyCode += "\tmov %rax, (%rdi)\n";
 }
 
+void GGenerateCode::declarationNode(GDeclarationNode* node)
+{
+    foreach(GSyntaxNode* assign, node->m_assignList)
+    {
+        assign->generateCode(this);
+    }
+}
+
 void GGenerateCode::binaryNode(GBinaryNode* node)
 {
     node->m_pRightNode->generateCode(this);

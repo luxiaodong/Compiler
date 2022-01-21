@@ -195,6 +195,42 @@ GSyntaxNode* GParser::parseSentence()
         this->getNextToken();
         return node;
     }
+    else if(this->isValidType(m_pCurrentToken->m_type)) //变量声明
+    {
+        GDeclarationNode* node = new GDeclarationNode();
+        GType* baseType = this->parseDeclarationSpec();
+
+        while(true)
+        {
+            Q_ASSERT(m_pCurrentToken->m_type == TokenType::Identifier);
+            GToken* pToken;
+            GType* pType = this->parseDeclarator(baseType, pToken);
+            GSymbolTable::addVariable(pToken->m_context, pType);
+            if(m_pCurrentToken->m_type == TokenType::Assign)
+            {
+                GVariableNode* varNode = new GVariableNode();
+                varNode->m_name = pToken->m_context;
+                varNode->m_pType = pType;
+                GAssignNode* assign = new GAssignNode();
+                assign->m_pLeftNode = varNode;
+                this->getNextToken();
+                assign->m_pRightNode = this->parseExpression();
+                node->m_assignList.append(assign);
+            }
+
+            if(m_pCurrentToken->m_type == TokenType::Semicolon)
+            {
+                break;
+            }
+            else if(m_pCurrentToken->m_type == TokenType::Comma)
+            {
+                this->getNextToken();
+            }
+        }
+
+        Q_ASSERT(m_pCurrentToken->m_type == TokenType::Semicolon);
+        return node;
+    }
 
     GSentenceNode* node = new GSentenceNode();
     if(m_pCurrentToken->m_type != TokenType::Semicolon)
@@ -206,7 +242,7 @@ GSyntaxNode* GParser::parseSentence()
         node->m_pNode = NULL;
     }
 
-    qDebug()<<m_pCurrentToken->m_context;
+//    qDebug()<<m_pCurrentToken->m_context;
     Q_ASSERT(m_pCurrentToken->m_type == TokenType::Semicolon);
     this->getNextToken();
     return node;
@@ -374,6 +410,7 @@ GSyntaxNode* GParser::parseConstant()
     GConstantNode* node = new GConstantNode();
     node->m_pToken = m_pCurrentToken;
     node->m_value = m_pCurrentToken->m_context.toInt();
+//qDebug()<<"------>"<<m_pCurrentToken->m_context;
     this->getNextToken();
     return node;
 }
@@ -399,7 +436,7 @@ GType* GParser::parseDeclarator(GType* baseType, GToken* &pToken)
     }
 
     Q_ASSERT(m_pCurrentToken->m_type == TokenType::Identifier);
-    pToken = m_pCurrentToken; //第一个变量.
+    pToken = m_pCurrentToken; //第一个变量 或者函数名
     this->getNextToken();
     pType = parseTypeSuffix(pType);
     return pType;
@@ -438,6 +475,12 @@ GType* GParser::parseTypeSuffix(GType* pType)
     }
 
     return pType;
+}
+
+bool GParser::isValidType(TokenType type)
+{
+    if(type == TokenType::Int) return true;
+    return false;
 }
 
 void GParser::getNextToken()
