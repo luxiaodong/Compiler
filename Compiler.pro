@@ -19,6 +19,7 @@ SOURCES += main.cpp \
     src/ggeneratecode.cpp \
     src/gsyntaxtree.cpp \
     src/gsyntaxnode.cpp \
+    src/gtype.cpp \
     src/gvariable.cpp \
     theory/gunrestrictedgrammar.cpp \
     theory/gcontextsensitivegrammar.cpp \
@@ -47,6 +48,7 @@ HEADERS += \
     src/ggeneratecode.h \
     src/gsyntaxtree.h \
     src/gsyntaxnode.h \
+    src/gtype.h \
     src/gvariable.h \
     theory/gunrestrictedgrammar.h \
     theory/gcontextsensitivegrammar.h \

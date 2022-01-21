@@ -1,9 +1,10 @@
 #ifndef GSYNTAXNODE_H
 #define GSYNTAXNODE_H
 
+#include <QList>
 #include "src/gtoken.h"
 #include "src/gvariable.h"
-#include <QList>
+#include "src/gtype.h"
 
 enum BinaryOperator{
     OP_Add,
@@ -29,6 +30,7 @@ public:
 
 public:
     GToken* m_pToken;
+    GType* m_pType;
 };
 
 class GProgramNode : public GSyntaxNode

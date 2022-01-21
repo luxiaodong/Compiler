@@ -31,6 +31,7 @@ enum TokenType{
     For,
     Comma,
     Return,
+    Int,
     Eof,
 };
 

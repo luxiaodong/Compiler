@@ -2,7 +2,7 @@
 
 QList<GVariable*> GSymbolTable::m_variables;
 
-void GSymbolTable::addVariable(QString name)
+void GSymbolTable::addVariable(QString name, GType* pType)
 {
     if(name.isEmpty()) return ;
     foreach(GVariable* var, m_variables)
@@ -12,6 +12,7 @@ void GSymbolTable::addVariable(QString name)
 
     GVariable* var = new GVariable();
     var->m_name = name;
+    var->m_pType = pType;
     var->m_address = 0;
     m_variables.append(var);
 }

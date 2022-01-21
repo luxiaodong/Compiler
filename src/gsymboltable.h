@@ -9,7 +9,7 @@
 class GSymbolTable
 {
 public:
-    static void addVariable(QString name);
+    static void addVariable(QString name, GType* pType);
     static GVariable* getVariable(QString name);
     static int getAddress(QString name);
     static QList<GVariable*> m_variables;

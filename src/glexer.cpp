@@ -231,6 +231,10 @@ bool GLexer::nextToken()
         {
             token->m_type = TokenType::Return;
         }
+        else if(token->m_context == QString("int"))
+        {
+            token->m_type = TokenType::Int;
+        }
     }
     else
     {

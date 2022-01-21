@@ -6,6 +6,7 @@
 #include "src/gsyntaxnode.h"
 #include "src/gsyntaxtree.h"
 #include "src/gsymboltable.h"
+#include "src/gtype.h"
 
 class GParser
 {
@@ -26,6 +27,11 @@ private:
     GSyntaxNode* parseExpressionAdd();
     GSyntaxNode* parseExpressionMul();
     GSyntaxNode* parseConstant();
+
+private:
+    GType* parseDeclarationSpec();
+    GType* parseDeclarator(GType* baseType, GToken* &pToken);
+    GType* parseTypeSuffix(GType* pType);
 
 private:
     void getNextToken();

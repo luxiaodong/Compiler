@@ -35,16 +35,16 @@ void GCompiler::readText(const QString& text)
     }
     lexer.printTokens();
 
-//    GParser parser(lexer);
-//    if(parser.analysis() == false)
-//    {
-//        qDebug()<<"parser error.";
-//        return ;
-//    }
+    GParser parser(lexer);
+    if(parser.analysis() == false)
+    {
+        qDebug()<<"parser error.";
+        return ;
+    }
 
-//    GGenerateCode genCode;
-//    parser.m_pTree->m_pRoot->generateCode(&genCode);
-//    genCode.printCode();
+    GGenerateCode genCode;
+    parser.m_pTree->m_pRoot->generateCode(&genCode);
+    genCode.printCode();
 }
 
 void GCompiler::test()

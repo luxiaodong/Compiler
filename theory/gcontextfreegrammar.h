@@ -4,6 +4,9 @@
 #include <QMap>
 #include "theory/gcontextsensitivegrammar.h"
 
+// LL(1)
+// SLR    SDD SDT
+
 class GContextFreeGrammar : public GContextSensitiveGrammar
 {
 public:

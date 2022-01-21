@@ -31,50 +31,35 @@ GSyntaxNode* GParser::parseProgram()
 
 GSyntaxNode* GParser::parseFunction()
 {
-    if(m_pCurrentToken->m_type == TokenType::Identifier)
+    GFunctionNode* node = new GFunctionNode();
+    GType* baseType = this->parseDeclarationSpec();
+    GToken*  pToken;
+    node->m_pType = this->parseDeclarator(baseType, pToken);
+    node->m_funcName = pToken->m_context; //函数名
+    GFunctionType* funType = dynamic_cast<GFunctionType*>(node->m_pType);
+
+    for(int i = 0; i < funType->m_paramList.size(); i++)
     {
-        GFunctionNode* node = new GFunctionNode();
-        node->m_funcName = m_pCurrentToken->m_context; //函数名
-        this->getNextToken();
-        Q_ASSERT(m_pCurrentToken->m_type == TokenType::LeftParent);
-        this->getNextToken();
-        if(m_pCurrentToken->m_type != TokenType::RightParent) //有参数
-        {
-            Q_ASSERT(m_pCurrentToken->m_type == TokenType::Identifier);
-            while(true)
-            {
-                QString name = m_pCurrentToken->m_context;
-                GSymbolTable::addVariable(name); //添加到符号表
-                GVariable* var = GSymbolTable::getVariable(name);
-                node->m_args.append(var);
-                this->getNextToken();
-
-                if(m_pCurrentToken->m_type != TokenType::Comma)
-                {
-                    break;
-                }
-            }
-        }
-        Q_ASSERT(m_pCurrentToken->m_type == TokenType::RightParent);
-        this->getNextToken();
-        Q_ASSERT(m_pCurrentToken->m_type == TokenType::LeftBrace);
-        // node->m_braceNode = this->parseSentence();
-
-        this->getNextToken();
-        node->m_sentenceList.clear();
-        while(m_pCurrentToken->m_type != TokenType::RightBrace)
-        {
-//            qDebug()<<m_pCurrentToken->m_context;
-            node->m_sentenceList.append(this->parseSentence());
-        }
-
-        Q_ASSERT(m_pCurrentToken->m_type == TokenType::RightBrace);
-        this->getNextToken();
-        return node;
+        QString name = funType->m_paramList.at(i)->m_pToken->m_context;
+        GType* pType = funType->m_paramList.at(i)->m_pType;
+        GSymbolTable::addVariable(name, pType);
+        GVariable* var = GSymbolTable::getVariable(name);
+        node->m_args.append(var);
     }
+    // node->m_pType = funType;
+    Q_ASSERT(m_pCurrentToken->m_type == TokenType::LeftBrace);
+    // node->m_braceNode = this->parseSentence();
 
-    Q_ASSERT(false);
-    return NULL;
+    this->getNextToken();
+    node->m_sentenceList.clear();
+    while(m_pCurrentToken->m_type != TokenType::RightBrace)
+    {
+//            qDebug()<<m_pCurrentToken->m_context;
+        node->m_sentenceList.append(this->parseSentence());
+    }
+    Q_ASSERT(m_pCurrentToken->m_type == TokenType::RightBrace);
+    this->getNextToken();
+    return node;
 }
 
 GSyntaxNode* GParser::parseFunctionCall()
@@ -380,7 +365,8 @@ GSyntaxNode* GParser::parseConstant()
         GVariableNode* node = new GVariableNode();
         node->m_pToken = m_pCurrentToken;
         node->m_name = m_pCurrentToken->m_context;
-        GSymbolTable::addVariable(node->m_name); //添加到符号表
+         GSymbolTable::addVariable(node->m_name, GBuildInType::m_intType); //添加到符号表
+//        Q_ASSERT(false); //这里不可能走到了, 只有单个变量名, 没有类型
         this->getNextToken();
         return node;
     }
@@ -390,6 +376,68 @@ GSyntaxNode* GParser::parseConstant()
     node->m_value = m_pCurrentToken->m_context.toInt();
     this->getNextToken();
     return node;
+}
+
+GType* GParser::parseDeclarationSpec()
+{
+    if(m_pCurrentToken->m_type == TokenType::Int)
+    {
+        this->getNextToken();
+        return GBuildInType::m_intType;
+    }
+
+    return NULL;
+}
+
+GType* GParser::parseDeclarator(GType* baseType, GToken* &pToken)
+{
+    GType* pType = baseType;
+    while(m_pCurrentToken->m_type == TokenType::Mul)
+    {
+        pType = new GPointerType(pType);
+        this->getNextToken();
+    }
+
+    Q_ASSERT(m_pCurrentToken->m_type == TokenType::Identifier);
+    pToken = m_pCurrentToken; //第一个变量.
+    this->getNextToken();
+    pType = parseTypeSuffix(pType);
+    return pType;
+}
+
+GType* GParser::parseTypeSuffix(GType* pType)
+{
+    if(m_pCurrentToken->m_type == TokenType::LeftParent) //是个函数
+    {
+        GFunctionType* pFunType = new GFunctionType(pType);
+        this->getNextToken();
+
+        if(m_pCurrentToken->m_type != TokenType::RightParent)
+        {
+            while(true)
+            {
+                GToken* pToken;
+                GType* argcType = this->parseDeclarator(this->parseDeclarationSpec(), pToken);
+                GFunctionParam* param = new GFunctionParam();
+                param->m_pType = argcType;
+                param->m_pToken = pToken;
+                pFunType->m_paramList.append(param);
+
+                if(m_pCurrentToken->m_type == TokenType::RightParent)
+                {
+                    break;
+                }
+
+                Q_ASSERT(m_pCurrentToken->m_type == TokenType::Comma);
+                this->getNextToken();
+            }
+        }
+        Q_ASSERT(m_pCurrentToken->m_type == TokenType::RightParent);
+        this->getNextToken();
+        return pFunType;
+    }
+
+    return pType;
 }
 
 void GParser::getNextToken()
