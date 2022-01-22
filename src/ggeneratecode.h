@@ -17,6 +17,7 @@ public:
     void sentenceNode(GSentenceNode* node);
     void braceNode(GBraceNode* node);
     void expressionNode(GExpressionNode* node);
+    void expressionSentenceNode(GExpressionSentenceNode* node);
     void whileNode(GWhileNode* node);
     void dowhileNode(GDoWhileNode* node);
     void forloopNode(GForLoopNode* node);

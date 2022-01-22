@@ -14,6 +14,6 @@ fib(n)
 
 int prog()
 {
-	int a, b=7;
+	int a, b=({2+3;});
 	return sum(b);
 }

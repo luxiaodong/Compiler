@@ -37,6 +37,11 @@ void GExpressionNode::generateCode(GGenerateCode *genCode)
     genCode->expressionNode(this);
 }
 
+void GExpressionSentenceNode::generateCode(GGenerateCode *genCode)
+{
+    genCode->expressionSentenceNode(this);
+}
+
 void GBraceNode::generateCode(GGenerateCode *genCode)
 {
     genCode->braceNode(this);

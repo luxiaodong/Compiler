@@ -120,6 +120,14 @@ void GGenerateCode::expressionNode(GExpressionNode* node)
     }
 }
 
+void GGenerateCode::expressionSentenceNode(GExpressionSentenceNode* node)
+{
+    foreach(GSyntaxNode* sentence, node->m_sentenceList)
+    {
+        sentence->generateCode(this);
+    }
+}
+
 void GGenerateCode::whileNode(GWhileNode* node)
 {
     int n = m_conditionIndex++;

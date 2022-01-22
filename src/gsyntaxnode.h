@@ -96,6 +96,15 @@ public:
     GSyntaxNode* m_pNode;
 };
 
+class GExpressionSentenceNode : public GSyntaxNode
+{
+public:
+    virtual ~GExpressionSentenceNode(){}
+    virtual void generateCode(GGenerateCode *genCode);
+public:
+    QList<GSyntaxNode*> m_sentenceList;
+};
+
 class GBraceNode : public GSyntaxNode
 {
 public:

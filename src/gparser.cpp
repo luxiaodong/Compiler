@@ -385,6 +385,20 @@ GSyntaxNode* GParser::parseConstant()
     if(m_pCurrentToken->m_type == TokenType::LeftParent)
     {
         this->getNextToken();
+        if(m_pCurrentToken->m_type == TokenType::LeftBrace)
+        {
+            this->getNextToken();
+            GExpressionSentenceNode* node = new GExpressionSentenceNode();
+            while(m_pCurrentToken->m_type != TokenType::RightBrace)
+            {
+                node->m_sentenceList.append(this->parseSentence());
+            }
+            this->getNextToken();
+            Q_ASSERT(m_pCurrentToken->m_type == TokenType::RightParent);
+            this->getNextToken();
+            return node;
+        }
+
         GSyntaxNode* node = this->parseExpression();
         Q_ASSERT(m_pCurrentToken->m_type == TokenType::RightParent);
         this->getNextToken();
