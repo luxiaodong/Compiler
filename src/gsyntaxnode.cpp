@@ -77,6 +77,11 @@ void GDeclarationNode::generateCode(GGenerateCode *genCode)
     genCode->declarationNode(this);
 }
 
+void GUnaryNode::generateCode(GGenerateCode *genCode)
+{
+    genCode->unaryNode(this);
+}
+
 void GBinaryNode::generateCode(GGenerateCode*  genCode)
 {
     genCode->binaryNode(this);

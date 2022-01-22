@@ -17,7 +17,7 @@ void GGenerateCode::printCode()
     qDebug().noquote()<<m_assemblyCode;
     qDebug()<<"deep is "<<m_deep;
 
-    QString filePath = QDir::currentPath() + QString("/../Compiler/calculate/prog.s");
+    QString filePath = QDir::currentPath() + QString("/../Compiler/test/test.s");
     QFile file(filePath);
     if(file.open(QIODevice::WriteOnly))
     {
@@ -205,8 +205,7 @@ void GGenerateCode::conditionNode(GConditionNode* node)
 
 void GGenerateCode::assignNode(GAssignNode* node)
 {
-    GVariableNode* left = dynamic_cast<GVariableNode*>(node->m_pLeftNode);
-    m_assemblyCode += QString("\tlea %1(%rbp), %rax\n").arg(GSymbolTable::getAddress(left->m_name));
+    this->genAddress(node->m_pLeftNode);
     this->push();
     node->m_pRightNode->generateCode(this);
     this->pop("%rdi");
@@ -218,6 +217,28 @@ void GGenerateCode::declarationNode(GDeclarationNode* node)
     foreach(GSyntaxNode* assign, node->m_assignList)
     {
         assign->generateCode(this);
+    }
+}
+
+void GGenerateCode::unaryNode(GUnaryNode* node)
+{
+    if(node->m_uOp == UnaryOperator::OP_Plus)
+    {
+        node->m_pNode->generateCode(this);
+    }
+    else if(node->m_uOp == UnaryOperator::OP_Minus)
+    {
+        node->m_pNode->generateCode(this);
+        m_assemblyCode += "\tneg %rax\n";
+    }
+    else if(node->m_uOp == UnaryOperator::OP_Deref)
+    {
+        this->genAddress(node);
+        m_assemblyCode += "\tmov (%rax), %rax\n";
+    }
+    else if(node->m_uOp == UnaryOperator::OP_Amp)
+    {
+        this->genAddress(node->m_pNode);
     }
 }
 
@@ -279,6 +300,24 @@ void GGenerateCode::binaryNode(GBinaryNode* node)
     }
 }
 
+void GGenerateCode::genAddress(GSyntaxNode* node)
+{
+    GVariableNode* varNode = dynamic_cast<GVariableNode*>(node);
+    if(varNode)
+    {
+        GVariable* var = GSymbolTable::getVariable(varNode->m_name);
+        m_assemblyCode += QString("\tlea %1(%rbp), %rax\n").arg(var->m_address);
+    }
+    else
+    {
+        GUnaryNode* unaryNode = dynamic_cast<GUnaryNode*>(node);
+        if(unaryNode->m_uOp == UnaryOperator::OP_Deref)
+        {
+            unaryNode->m_pNode->generateCode(this);
+        }
+    }
+}
+
 void GGenerateCode::constantNode(GConstantNode* node)
 {
     m_assemblyCode += QString("\tmov $%1, %rax\n").arg(node->m_value);
@@ -306,3 +345,4 @@ int GGenerateCode::alignTo(int size, int align)
 {
     return (size + align - 1) / align * align;
 }
+

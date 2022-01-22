@@ -53,22 +53,22 @@ bool GLexer::nextToken()
     }
     else if(m_currentChar == '+')
     {
-        token->m_type = TokenType::Add;
+        token->m_type = TokenType::Plus;
         nextChar();
     }
     else if(m_currentChar == '-')
     {
-        token->m_type = TokenType::Sub;
+        token->m_type = TokenType::Minus;
         nextChar();
     }
     else if(m_currentChar == '*')
     {
-        token->m_type = TokenType::Mul;
+        token->m_type = TokenType::Star;
         nextChar();
     }
     else if(m_currentChar == '/')
     {
-        token->m_type = TokenType::Div;
+        token->m_type = TokenType::Slash;
         nextChar();
 
         if(m_currentChar == '/') //注释
@@ -102,6 +102,12 @@ bool GLexer::nextToken()
                         nextChar();
                         return true;
                     }
+                }
+
+                if(m_currentChar == '\n')
+                {
+                    m_line++;
+                    m_lineCursor = m_cursor;
                 }
 
                 if(m_currentChar == '\0')
@@ -187,6 +193,11 @@ bool GLexer::nextToken()
     else if(m_currentChar == ',')
     {
         token->m_type = TokenType::Comma;
+        nextChar();
+    }
+    else if(m_currentChar == '&')
+    {
+        token->m_type = TokenType::Amp;
         nextChar();
     }
     else if(m_currentChar.isDigit())

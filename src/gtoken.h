@@ -6,10 +6,10 @@
 #include <QDebug>
 
 enum TokenType{
-    Add,
-    Sub,
-    Mul,
-    Div,
+    Plus,
+    Minus,
+    Star,
+    Slash,
     Num,
     LeftParent,
     RightParent,
@@ -32,6 +32,7 @@ enum TokenType{
     Comma,
     Return,
     Int,
+    Amp, //&
     Eof,
 };
 

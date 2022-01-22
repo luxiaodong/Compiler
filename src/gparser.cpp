@@ -202,7 +202,6 @@ GSyntaxNode* GParser::parseSentence()
 
         while(true)
         {
-            Q_ASSERT(m_pCurrentToken->m_type == TokenType::Identifier);
             GToken* pToken;
             GType* pType = this->parseDeclarator(baseType, pToken);
             GSymbolTable::addVariable(pToken->m_context, pType);
@@ -327,10 +326,10 @@ GSyntaxNode* GParser::parseExpressionAdd()
     GSyntaxNode* left = this->parseExpressionMul();
     while(m_pCurrentToken)
     {
-        if(m_pCurrentToken->m_type == TokenType::Add || m_pCurrentToken->m_type == TokenType::Sub)
+        if(m_pCurrentToken->m_type == TokenType::Plus || m_pCurrentToken->m_type == TokenType::Minus)
         {
             BinaryOperator binOp = BinaryOperator::OP_Sub;
-            if(m_pCurrentToken->m_type == TokenType::Add)
+            if(m_pCurrentToken->m_type == TokenType::Plus)
             {
                 binOp = BinaryOperator::OP_Add;
             }
@@ -353,13 +352,13 @@ GSyntaxNode* GParser::parseExpressionAdd()
 
 GSyntaxNode* GParser::parseExpressionMul()
 {
-    GSyntaxNode* left = this->parseConstant();
+    GSyntaxNode* left = this->parseExpressionUnary();
     while(m_pCurrentToken)
     {
-        if(m_pCurrentToken->m_type == TokenType::Mul || m_pCurrentToken->m_type == TokenType::Div)
+        if(m_pCurrentToken->m_type == TokenType::Star || m_pCurrentToken->m_type == TokenType::Slash)
         {
             BinaryOperator binOp = BinaryOperator::OP_Div;
-            if(m_pCurrentToken->m_type == TokenType::Mul)
+            if(m_pCurrentToken->m_type == TokenType::Star)
             {
                 binOp = BinaryOperator::OP_Mul;
             }
@@ -369,7 +368,7 @@ GSyntaxNode* GParser::parseExpressionMul()
             this->getNextToken();
             node->m_binOp = binOp;
             node->m_pLeftNode = left;
-            node->m_pRightNode = this->parseConstant();
+            node->m_pRightNode = this->parseExpressionUnary();
             left = node;
         }
         else
@@ -378,6 +377,35 @@ GSyntaxNode* GParser::parseExpressionMul()
         }
     }
     return left;
+}
+
+GSyntaxNode* GParser::parseExpressionUnary()
+{
+    if(m_pCurrentToken->m_type == TokenType::Plus ||
+       m_pCurrentToken->m_type == TokenType::Minus ||
+       m_pCurrentToken->m_type == TokenType::Star ||
+       m_pCurrentToken->m_type == TokenType::Amp)
+    {
+        GUnaryNode* node = new GUnaryNode();
+        node->m_uOp = UnaryOperator::OP_Plus;
+        if(m_pCurrentToken->m_type  == TokenType::Minus)
+        {
+            node->m_uOp = UnaryOperator::OP_Minus;
+        }
+        else if(m_pCurrentToken->m_type == TokenType::Star)
+        {
+            node->m_uOp = UnaryOperator::OP_Deref;
+        }
+        else if(m_pCurrentToken->m_type == TokenType::Amp)
+        {
+            node->m_uOp = UnaryOperator::OP_Amp;
+        }
+        this->getNextToken();
+        node->m_pNode = this->parseExpressionUnary();
+        return node;
+    }
+
+    return this->parseConstant();
 }
 
 GSyntaxNode* GParser::parseConstant()
@@ -443,7 +471,7 @@ GType* GParser::parseDeclarationSpec()
 GType* GParser::parseDeclarator(GType* baseType, GToken* &pToken)
 {
     GType* pType = baseType;
-    while(m_pCurrentToken->m_type == TokenType::Mul)
+    while(m_pCurrentToken->m_type == TokenType::Star)
     {
         pType = new GPointerType(pType);
         this->getNextToken();

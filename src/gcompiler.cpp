@@ -64,7 +64,7 @@ void GCompiler::test()
 //    this->readText("s=0;i=0;do{s=s+i;i=i+1;}while(i<11); s;");
 //    this->readText("s=0;for(i=0;i<10;i=i+1) s=s+i; s;");
 
-    QString filePath = QDir::currentPath() + QString("/../Compiler/calculate/prog.c");
+    QString filePath = QDir::currentPath() + QString("/../Compiler/test/test.c");
     this->readFile(filePath);
 
 //    GContextFreeGrammar parser;

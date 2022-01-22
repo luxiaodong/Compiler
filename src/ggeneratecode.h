@@ -24,11 +24,14 @@ public:
     void conditionNode(GConditionNode* node);
     void assignNode(GAssignNode* node);
     void declarationNode(GDeclarationNode* node);
+    void unaryNode(GUnaryNode* node);
     void binaryNode(GBinaryNode* node);
     void constantNode(GConstantNode* node);
     void variableNode(GVariableNode* node);
 
 private:
+    void genAddress(GSyntaxNode* node);
+
     void push();
     void pop(QString reg);
     int alignTo(int size, int align);

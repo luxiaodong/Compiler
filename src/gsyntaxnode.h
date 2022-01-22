@@ -6,6 +6,14 @@
 #include "src/gvariable.h"
 #include "src/gtype.h"
 
+enum UnaryOperator
+{
+    OP_Plus,
+    OP_Minus,
+    OP_Deref,
+    OP_Amp,
+};
+
 enum BinaryOperator{
     OP_Add,
     OP_Sub,
@@ -174,6 +182,17 @@ public:
     virtual void generateCode(GGenerateCode *genCode);
 public:
     QList<GSyntaxNode*> m_assignList;
+};
+
+class GUnaryNode : public GSyntaxNode
+{
+public:
+    virtual ~GUnaryNode(){}
+    virtual void generateCode(GGenerateCode *genCode);
+
+public:
+    UnaryOperator m_uOp;
+    GSyntaxNode* m_pNode;
 };
 
 //二元操作符

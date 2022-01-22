@@ -26,6 +26,7 @@ private:
     GSyntaxNode* parseExpressionAssign();
     GSyntaxNode* parseExpressionAdd();
     GSyntaxNode* parseExpressionMul();
+    GSyntaxNode* parseExpressionUnary();
     GSyntaxNode* parseConstant();
 
 private:
