@@ -394,7 +394,7 @@ GSyntaxNode* GParser::parseExpressionUnary()
         }
         else if(m_pCurrentToken->m_type == TokenType::Star)
         {
-            node->m_uOp = UnaryOperator::OP_Deref;
+            node->m_uOp = UnaryOperator::OP_Star;
         }
         else if(m_pCurrentToken->m_type == TokenType::Amp)
         {

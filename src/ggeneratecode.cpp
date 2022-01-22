@@ -231,7 +231,7 @@ void GGenerateCode::unaryNode(GUnaryNode* node)
         node->m_pNode->generateCode(this);
         m_assemblyCode += "\tneg %rax\n";
     }
-    else if(node->m_uOp == UnaryOperator::OP_Deref)
+    else if(node->m_uOp == UnaryOperator::OP_Star)
     {
         this->genAddress(node);
         m_assemblyCode += "\tmov (%rax), %rax\n";
@@ -311,7 +311,7 @@ void GGenerateCode::genAddress(GSyntaxNode* node)
     else
     {
         GUnaryNode* unaryNode = dynamic_cast<GUnaryNode*>(node);
-        if(unaryNode->m_uOp == UnaryOperator::OP_Deref)
+        if(unaryNode->m_uOp == UnaryOperator::OP_Star)
         {
             unaryNode->m_pNode->generateCode(this);
         }

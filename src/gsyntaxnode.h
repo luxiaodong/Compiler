@@ -10,7 +10,7 @@ enum UnaryOperator
 {
     OP_Plus,
     OP_Minus,
-    OP_Deref,
+    OP_Star,
     OP_Amp,
 };
 
