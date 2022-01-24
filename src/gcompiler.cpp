@@ -5,6 +5,7 @@
 #include <QDir>
 
 #include "src/ggeneratecode.h"
+#include "src/gcalculatetype.h"
 #include "theory/gcontextfreegrammar.h"
 
 GCompiler::GCompiler()
@@ -43,6 +44,8 @@ void GCompiler::readText(const QString& text)
     }
 
     GGenerateCode genCode;
+    GCalculateType calType;
+    parser.m_pTree->m_pRoot->calculateType(&calType);
     parser.m_pTree->m_pRoot->generateCode(&genCode);
     genCode.printCode();
 

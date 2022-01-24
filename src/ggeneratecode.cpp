@@ -320,7 +320,7 @@ void GGenerateCode::binaryNode(GBinaryNode* node)
 
 void GGenerateCode::sizeofNode(GSizeofNode* node)
 {
-    m_assemblyCode += QString("\tmov $%d, %rax\n").arg(node->m_pType->m_size);
+    m_assemblyCode += QString("\tmov $%1, %rax\n").arg(node->m_pType->m_size);
 }
 
 void GGenerateCode::constantNode(GConstantNode* node)

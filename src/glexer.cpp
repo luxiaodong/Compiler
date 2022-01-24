@@ -246,7 +246,7 @@ bool GLexer::nextToken()
         {
             token->m_type = TokenType::Int;
         }
-        else if(token->m_type == QString("sizeof"))
+        else if(token->m_context == QString("sizeof"))
         {
             token->m_type = TokenType::SizeOf;
         }

@@ -35,11 +35,11 @@ int calculate()
   check(-1, ({ int x=3; int y = 4; int *z = &x; int *k = &y; z-k;}));
   check(5, ({ int x=3; int y = 4; *(&y-1) = 5; x;}));
 
-  // check(8, ({ int x=3; int *y = &x;  sizeof(x);}));
-  // check(8, ({ int x=3; int *y = &x;  sizeof(y);}));
-  // check(8, ({ int x=3; int *y = &x;  sizeof y;}));
-  // check(8, ({ int x=3; int *y = &x;  sizeof 10;}));
-  // check(8, ({ int x=3; int *y = &x;  sizeof -10;}));
+  check(8, ({ int x=3; int *y = &x;  sizeof(x);}));
+  check(8, ({ int x=3; int *y = &x;  sizeof(y);}));
+  check(8, ({ int x=3; int *y = &x;  sizeof y;}));
+  check(8, ({ int x=3; int *y = &x;  sizeof 10;}));
+  check(8, ({ int x=3; int *y = &x;  sizeof -10;}));
   return 0;
 }
 
