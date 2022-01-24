@@ -5,9 +5,6 @@ int main(int argc, char *argv[])
 {
     (void)argc;
     (void)argv;
-
-//     QCoreApplication a(argc, argv);
      GCompiler compiler;
      compiler.test();
-//     return a.exec();
 }

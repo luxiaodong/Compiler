@@ -11,10 +11,12 @@ CONFIG += sdk_no_version_check
 TEMPLATE = app
 
 SOURCES += main.cpp \
+    src/gcalculatetype.cpp \
     src/glexer.cpp \
     src/gcompiler.cpp \
     src/gparser.cpp \
     src/gsymboltable.cpp \
+    src/gsyntaxtreetraverse.cpp \
     src/gtoken.cpp \
     src/ggeneratecode.cpp \
     src/gsyntaxtree.cpp \
@@ -40,10 +42,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 HEADERS += \
+    src/gcalculatetype.h \
     src/glexer.h \
     src/gcompiler.h \
     src/gparser.h \
     src/gsymboltable.h \
+    src/gsyntaxtreetraverse.h \
     src/gtoken.h \
     src/ggeneratecode.h \
     src/gsyntaxtree.h \

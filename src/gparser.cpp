@@ -1,4 +1,5 @@
 #include "gparser.h"
+#include "src/gcalculatetype.h"
 
 GParser::GParser(const GLexer &lexer):m_lexer(lexer),m_tokenIndex(0)
 {
@@ -328,18 +329,79 @@ GSyntaxNode* GParser::parseExpressionAdd()
     {
         if(m_pCurrentToken->m_type == TokenType::Plus || m_pCurrentToken->m_type == TokenType::Minus)
         {
-            BinaryOperator binOp = BinaryOperator::OP_Sub;
-            if(m_pCurrentToken->m_type == TokenType::Plus)
+            GToken* currentToken = m_pCurrentToken;
+            this->getNextToken();
+            GSyntaxNode* right = this->parseExpressionMul();
+
+            GCalculateType calculate;
+            left->calculateType(&calculate);
+            right->calculateType(&calculate);
+
+            BinaryOperator binOp = BinaryOperator::OP_NULL;
+            if(currentToken->m_type == TokenType::Plus)
             {
-                binOp = BinaryOperator::OP_Add;
+                if(left->m_pType->isSameTypeKind(Kind_Pointer) && right->m_pType->isSameTypeKind(Kind_BuildIn))
+                {
+                    GBuildInType* pType = dynamic_cast<GBuildInType*>(right->m_pType);
+                    if(pType->isSameBuildInKind(BuildInKind::Kind_Int))
+                    {
+                        binOp = BinaryOperator::OP_PtrAdd;
+                    }
+                }
+                else if(left->m_pType->isSameTypeKind(Kind_BuildIn) && right->m_pType->isSameTypeKind(Kind_Pointer))
+                {
+                    GBuildInType* pType = dynamic_cast<GBuildInType*>(left->m_pType);
+                    {
+                        if(pType->isSameBuildInKind(BuildInKind::Kind_Int))
+                        {
+                            GSyntaxNode* temp = left;
+                            left = right;
+                            right = temp;
+                            binOp = BinaryOperator::OP_PtrAdd;
+                        }
+                    }
+                }
+                else if(left->m_pType->isSameTypeKind(Kind_BuildIn) && right->m_pType->isSameTypeKind(Kind_BuildIn))
+                {
+                    GBuildInType* lType = dynamic_cast<GBuildInType*>(left->m_pType);
+                    GBuildInType* rType = dynamic_cast<GBuildInType*>(right->m_pType);
+                    if(lType->isSameBuildInKind(BuildInKind::Kind_Int) && rType->isSameBuildInKind(BuildInKind::Kind_Int))
+                    {
+                        binOp = BinaryOperator::OP_Add;
+                    }
+                }
+            }
+            else if(currentToken->m_type == TokenType::Minus)
+            {
+                if(left->m_pType->isSameTypeKind(Kind_Pointer) && right->m_pType->isSameTypeKind(Kind_BuildIn))
+                {
+                    GBuildInType* pType = dynamic_cast<GBuildInType*>(right->m_pType);
+                    if(pType->isSameBuildInKind(BuildInKind::Kind_Int))
+                    {
+                        binOp = BinaryOperator::OP_PtrSub;
+                    }
+                }
+                else if(left->m_pType->isSameTypeKind(Kind_Pointer) && right->m_pType->isSameTypeKind(Kind_Pointer))
+                {
+                    binOp = BinaryOperator::OP_PtrDiff;
+                }
+                else if(left->m_pType->isSameTypeKind(Kind_BuildIn) && right->m_pType->isSameTypeKind(Kind_BuildIn))
+                {
+                    GBuildInType* lType = dynamic_cast<GBuildInType*>(left->m_pType);
+                    GBuildInType* rType = dynamic_cast<GBuildInType*>(right->m_pType);
+                    if(lType->isSameBuildInKind(BuildInKind::Kind_Int) && rType->isSameBuildInKind(BuildInKind::Kind_Int))
+                    {
+                        binOp = BinaryOperator::OP_Sub;
+                    }
+                }
             }
 
+            Q_ASSERT(binOp != BinaryOperator::OP_NULL);
             GBinaryNode* node = new GBinaryNode();
-            node->m_pToken = m_pCurrentToken;
-            this->getNextToken();
+            node->m_pToken = currentToken;
             node->m_binOp = binOp;
             node->m_pLeftNode = left;
-            node->m_pRightNode = this->parseExpressionMul();
+            node->m_pRightNode = right;
             left = node;
         }
         else
@@ -446,6 +508,13 @@ GSyntaxNode* GParser::parseConstant()
          GSymbolTable::addVariable(node->m_name, GBuildInType::m_intType); //添加到符号表
 //        Q_ASSERT(false); //这里不可能走到了, 只有单个变量名, 没有类型
         this->getNextToken();
+        return node;
+    }
+    else if(m_pCurrentToken->m_type == TokenType::SizeOf)
+    {
+        GSizeofNode* node = new GSizeofNode();
+        this->getNextToken();
+        node->m_pNode = this->parseExpressionUnary();
         return node;
     }
 

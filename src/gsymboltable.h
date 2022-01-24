@@ -9,6 +9,8 @@
 class GSymbolTable
 {
 public:
+    static void printTable();
+
     static void addVariable(QString name, GType* pType);
     static GVariable* getVariable(QString name);
     static int getAddress(QString name);

@@ -14,7 +14,8 @@ void GSymbolTable::addVariable(QString name, GType* pType)
     var->m_name = name;
     var->m_pType = pType;
     var->m_address = 0;
-    m_variables.append(var);
+//    m_variables.append(var);
+    m_variables.prepend(var);
 }
 
 GVariable* GSymbolTable::getVariable(QString name)
@@ -35,4 +36,12 @@ int GSymbolTable::getAddress(QString name)
     }
 
     return 0;
+}
+
+void GSymbolTable::printTable()
+{
+    foreach(GVariable* var, GSymbolTable::m_variables)
+    {
+        qDebug()<<var->m_name<<"("<<var->m_pType->m_type<<")"<<"\t"<<var->m_address;
+    }
 }

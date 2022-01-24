@@ -45,6 +45,8 @@ void GCompiler::readText(const QString& text)
     GGenerateCode genCode;
     parser.m_pTree->m_pRoot->generateCode(&genCode);
     genCode.printCode();
+
+//    GSymbolTable::printTable();
 }
 
 void GCompiler::test()

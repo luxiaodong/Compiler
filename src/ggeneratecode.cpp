@@ -11,6 +11,9 @@ GGenerateCode::GGenerateCode() : m_deep(0) , m_conditionIndex(0)
 {
 }
 
+GGenerateCode::~GGenerateCode()
+{}
+
 void GGenerateCode::printCode()
 {
     qDebug()<<"=========assembly code=============";
@@ -87,6 +90,7 @@ void GGenerateCode::functionCallNode(GFunctionCallNode* node)
         this->pop(Reg64[i]);
     }
 
+    m_assemblyCode += "\tmov $0, %rax\n";
     m_assemblyCode += QString("\tcall _%1\n").arg(node->m_funcName);
 }
 
@@ -293,11 +297,41 @@ void GGenerateCode::binaryNode(GBinaryNode* node)
         m_assemblyCode += "\tsetle %al\n";
         m_assemblyCode += "\tmovzb %al, %rax\n";
         break;
+    case BinaryOperator::OP_PtrAdd:
+        m_assemblyCode += QString("\timul $%1, %rdi\n").arg(node->m_pLeftNode->m_pType->m_size);
+        m_assemblyCode += "\tadd %rdi, %rax\n";
+        break;
+    case BinaryOperator::OP_PtrSub:
+        m_assemblyCode += QString("\timul $%1, %rdi\n").arg(node->m_pLeftNode->m_pType->m_size);
+        m_assemblyCode += "\tsub %rdi, %rax\n";
+        break;
+    case BinaryOperator::OP_PtrDiff:
+        m_assemblyCode += "\tsub %rdi, %rax\n";
+        m_assemblyCode += QString("\tmov $%1, %rdi\n").arg(node->m_pLeftNode->m_pType->m_size);
+        m_assemblyCode += "\tcqo\n";
+        m_assemblyCode += "\tidiv %rdi\n";
+        break;
 
     default:
         Q_ASSERT(false);
         break;
     }
+}
+
+void GGenerateCode::sizeofNode(GSizeofNode* node)
+{
+    m_assemblyCode += QString("\tmov $%d, %rax\n").arg(node->m_pType->m_size);
+}
+
+void GGenerateCode::constantNode(GConstantNode* node)
+{
+    m_assemblyCode += QString("\tmov $%1, %rax\n").arg(node->m_value);
+}
+
+void GGenerateCode::variableNode(GVariableNode* node)
+{
+    m_assemblyCode += QString("\tlea %1(%rbp), %rax\n").arg(GSymbolTable::getAddress(node->m_name));
+    m_assemblyCode += QString("\tmov (%rax), %rax\n");
 }
 
 void GGenerateCode::genAddress(GSyntaxNode* node)
@@ -316,17 +350,6 @@ void GGenerateCode::genAddress(GSyntaxNode* node)
             unaryNode->m_pNode->generateCode(this);
         }
     }
-}
-
-void GGenerateCode::constantNode(GConstantNode* node)
-{
-    m_assemblyCode += QString("\tmov $%1, %rax\n").arg(node->m_value);
-}
-
-void GGenerateCode::variableNode(GVariableNode* node)
-{
-    m_assemblyCode += QString("\tlea %1(%rbp), %rax\n").arg(GSymbolTable::getAddress(node->m_name));
-    m_assemblyCode += QString("\tmov (%rax), %rax\n");
 }
 
 void GGenerateCode::push()

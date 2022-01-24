@@ -1,16 +1,15 @@
-#ifndef GGENERATECODE_H
-#define GGENERATECODE_H
+#ifndef GCALCULATETYPE_H
+#define GCALCULATETYPE_H
 
 #include <QString>
 #include <QStringList>
 #include "src/gsyntaxtreetraverse.h"
 
-class GGenerateCode : public GSyntaxTreeTraverse
+class GCalculateType : public GSyntaxTreeTraverse
 {
 public:
-    GGenerateCode();
-    virtual ~GGenerateCode();
-    void printCode();
+    GCalculateType();
+    virtual ~GCalculateType();
     virtual void programNode(GProgramNode* node);
     virtual void functionNode(GFunctionNode* node);
     virtual void functionCallNode(GFunctionCallNode* node);
@@ -30,19 +29,6 @@ public:
     virtual void sizeofNode(GSizeofNode* node);
     virtual void constantNode(GConstantNode* node);
     virtual void variableNode(GVariableNode* node);
-
-private:
-    void genAddress(GSyntaxNode* node);
-
-    void push();
-    void pop(QString reg);
-    int alignTo(int size, int align);
-
-private:
-    QString m_assemblyCode;
-    QString m_currentFuncName;
-    int m_deep;
-    int m_conditionIndex;
 };
 
-#endif // GGENERATECODE_H
+#endif // GCALCULATETYPE_H

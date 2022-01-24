@@ -21,6 +21,7 @@ class GType
 public:
     GType(TypeKind type, int size, int align):m_type(type),m_size(size),m_align(align){}
     virtual ~GType(){}
+    bool isSameTypeKind(TypeKind kind);
 
 public:
     TypeKind m_type;
@@ -35,6 +36,7 @@ public:
 public:
     GBuildInType(BuildInKind bKind, int size, int align):GType(TypeKind::Kind_BuildIn, size, align),m_buildInKind(bKind){}
     BuildInKind getBuildInKind() const {return m_buildInKind;}
+    bool isSameBuildInKind(BuildInKind kind);
 private:
     BuildInKind m_buildInKind;
 };

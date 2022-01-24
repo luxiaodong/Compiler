@@ -33,6 +33,7 @@ enum TokenType{
     Return,
     Int,
     Amp, //&
+    SizeOf,
     Eof,
 };
 

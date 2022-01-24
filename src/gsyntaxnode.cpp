@@ -2,97 +2,102 @@
 #include "src/ggeneratecode.h"
 #include <QDebug>
 
-void GSyntaxNode::generateCode(GGenerateCode*  genCode)
+void GSyntaxNode::traverse(GSyntaxTreeTraverse* pAst)
 {
-    (void)genCode;
+    (void)pAst;
 }
 
-void GProgramNode::generateCode(GGenerateCode*  genCode)
+void GProgramNode::traverse(GSyntaxTreeTraverse*  pAst)
 {
-    genCode->programNode(this);
+    pAst->programNode(this);
 }
 
-void GFunctionNode::generateCode(GGenerateCode*  genCode)
+void GFunctionNode::traverse(GSyntaxTreeTraverse*  pAst)
 {
-    genCode->functionNode(this);
+    pAst->functionNode(this);
 }
 
-void GFunctionCallNode::generateCode(GGenerateCode *genCode)
+void GFunctionCallNode::traverse(GSyntaxTreeTraverse*  pAst)
 {
-    genCode->functionCallNode(this);
+    pAst->functionCallNode(this);
 }
 
-void GReturnNode::generateCode(GGenerateCode *genCode)
+void GReturnNode::traverse(GSyntaxTreeTraverse*  pAst)
 {
-    genCode->returnNode(this);
+    pAst->returnNode(this);
 }
 
-void GSentenceNode::generateCode(GGenerateCode *genCode)
+void GSentenceNode::traverse(GSyntaxTreeTraverse*  pAst)
 {
-    genCode->sentenceNode(this);
+    pAst->sentenceNode(this);
 }
 
-void GExpressionNode::generateCode(GGenerateCode *genCode)
+void GExpressionNode::traverse(GSyntaxTreeTraverse*  pAst)
 {
-    genCode->expressionNode(this);
+    pAst->expressionNode(this);
 }
 
-void GExpressionSentenceNode::generateCode(GGenerateCode *genCode)
+void GExpressionSentenceNode::traverse(GSyntaxTreeTraverse*  pAst)
 {
-    genCode->expressionSentenceNode(this);
+    pAst->expressionSentenceNode(this);
 }
 
-void GBraceNode::generateCode(GGenerateCode *genCode)
+void GBraceNode::traverse(GSyntaxTreeTraverse*  pAst)
 {
-    genCode->braceNode(this);
+    pAst->braceNode(this);
 }
 
-void GWhileNode::generateCode(GGenerateCode *genCode)
+void GWhileNode::traverse(GSyntaxTreeTraverse*  pAst)
 {
-    genCode->whileNode(this);
+    pAst->whileNode(this);
 }
 
-void GDoWhileNode::generateCode(GGenerateCode *genCode)
+void GDoWhileNode::traverse(GSyntaxTreeTraverse*  pAst)
 {
-    genCode->dowhileNode(this);
+    pAst->dowhileNode(this);
 }
 
-void GForLoopNode::generateCode(GGenerateCode *genCode)
+void GForLoopNode::traverse(GSyntaxTreeTraverse*  pAst)
 {
-    genCode->forloopNode(this);
+    pAst->forloopNode(this);
 }
 
-void GConditionNode::generateCode(GGenerateCode *genCode)
+void GConditionNode::traverse(GSyntaxTreeTraverse*  pAst)
 {
-    genCode->conditionNode(this);
+    pAst->conditionNode(this);
 }
 
-void GAssignNode::generateCode(GGenerateCode *genCode)
+void GAssignNode::traverse(GSyntaxTreeTraverse*  pAst)
 {
-    genCode->assignNode(this);
+    pAst->assignNode(this);
 }
 
-void GDeclarationNode::generateCode(GGenerateCode *genCode)
+void GDeclarationNode::traverse(GSyntaxTreeTraverse*  pAst)
 {
-    genCode->declarationNode(this);
+    pAst->declarationNode(this);
 }
 
-void GUnaryNode::generateCode(GGenerateCode *genCode)
+void GUnaryNode::traverse(GSyntaxTreeTraverse*  pAst)
 {
-    genCode->unaryNode(this);
+    pAst->unaryNode(this);
 }
 
-void GBinaryNode::generateCode(GGenerateCode*  genCode)
+void GBinaryNode::traverse(GSyntaxTreeTraverse*  pAst)
 {
-    genCode->binaryNode(this);
+    pAst->binaryNode(this);
 }
 
-void GConstantNode::generateCode(GGenerateCode*  genCode)
+void GSizeofNode::traverse(GSyntaxTreeTraverse*  pAst)
 {
-    genCode->constantNode(this);
+    pAst->sizeofNode(this);
 }
 
-void GVariableNode::generateCode(GGenerateCode *genCode)
+void GConstantNode::traverse(GSyntaxTreeTraverse*  pAst)
 {
-    genCode->variableNode(this);
+    pAst->constantNode(this);
+}
+
+void GVariableNode::traverse(GSyntaxTreeTraverse*  pAst)
+{
+    pAst->variableNode(this);
 }
