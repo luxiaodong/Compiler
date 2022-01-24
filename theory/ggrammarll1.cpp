@@ -1,10 +1,10 @@
-#include "gcontextfreegrammar.h"
+#include "ggrammarll1.h"
 
-GContextFreeGrammar::GContextFreeGrammar()
+GGrammarLL1::GGrammarLL1()
 {
 }
 
-void GContextFreeGrammar::test()
+void GGrammarLL1::test()
 {
     // 没有定义开始符号
     QStringList list;
@@ -20,7 +20,7 @@ void GContextFreeGrammar::test()
     this->print();
 }
 
-void GContextFreeGrammar::print()
+void GGrammarLL1::print()
 {
     qDebug()<<"================================= first";
 
@@ -46,7 +46,7 @@ void GContextFreeGrammar::print()
     }
 }
 
-void GContextFreeGrammar::create(const QStringList& list)
+void GGrammarLL1::create(const QStringList& list)
 {
     m_formulas.clear();
     m_heads.clear();
@@ -76,7 +76,7 @@ void GContextFreeGrammar::create(const QStringList& list)
 
 
 // 非终结符的first集合计算
-void GContextFreeGrammar::calculateFirstSet()
+void GGrammarLL1::calculateFirstSet()
 {
     while(true)
     {
@@ -91,7 +91,7 @@ void GContextFreeGrammar::calculateFirstSet()
     }
 }
 
-bool GContextFreeGrammar::calculateFirstSet(const QString& head)
+bool GGrammarLL1::calculateFirstSet(const QString& head)
 {
     bool isSymbolAppend = false;
     QStringList tempList = m_firstSet.value(head);
@@ -142,7 +142,7 @@ bool GContextFreeGrammar::calculateFirstSet(const QString& head)
 }
 
 // 非终结符的follow集合计算
-void GContextFreeGrammar::calculateFollowSet()
+void GGrammarLL1::calculateFollowSet()
 {
     QStringList tempList = m_followSet.value(m_startSymbol);
     tempList.append("#");
@@ -160,7 +160,7 @@ void GContextFreeGrammar::calculateFollowSet()
     }
 }
 
-bool GContextFreeGrammar::calculateFollowSet(const QString& head)
+bool GGrammarLL1::calculateFollowSet(const QString& head)
 {
     bool isSymbolAppend = false;
     QStringList tempList = m_followSet.value(head);
@@ -233,7 +233,7 @@ bool GContextFreeGrammar::calculateFollowSet(const QString& head)
     return isSymbolAppend;
 }
 
-void GContextFreeGrammar::calculateSelectSet()
+void GGrammarLL1::calculateSelectSet()
 {
     foreach(GProductionII* formula, m_formulas)
     {
@@ -256,7 +256,7 @@ void GContextFreeGrammar::calculateSelectSet()
     }
 }
 
-bool GContextFreeGrammar::isContainEmpty(const QString& head) const
+bool GGrammarLL1::isContainEmpty(const QString& head) const
 {
     QStringList follow = m_firstSet.value(head);
     if( follow.indexOf( GProduction::emptySymbol() ) == -1)

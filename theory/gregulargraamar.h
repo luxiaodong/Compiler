@@ -19,7 +19,7 @@
 
 // https://www.bilibili.com/read/cv6122366/
 
-class GRegularGraamar : public GContextFreeGrammar
+class GRegularGraamar
 {
 public:
     GRegularGraamar();

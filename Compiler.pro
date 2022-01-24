@@ -23,11 +23,9 @@ SOURCES += main.cpp \
     src/gsyntaxnode.cpp \
     src/gtype.cpp \
     src/gvariable.cpp \
-    theory/gunrestrictedgrammar.cpp \
-    theory/gcontextsensitivegrammar.cpp \
-    theory/gcontextfreegrammar.cpp \
-    theory/gregulargraamar.cpp \
     theory/gproduction.cpp \
+    theory/ggrammarll1.cpp \
+    theory/gregulargraamar.cpp \
     theory/gfiniteautomata.cpp
 
 # The following define makes your compiler emit warnings if you use
@@ -54,9 +52,7 @@ HEADERS += \
     src/gsyntaxnode.h \
     src/gtype.h \
     src/gvariable.h \
-    theory/gunrestrictedgrammar.h \
-    theory/gcontextsensitivegrammar.h \
-    theory/gcontextfreegrammar.h \
-    theory/gregulargraamar.h \
     theory/gproduction.h \
+    theory/ggrammarll1.h \
+    theory/gregulargraamar.h \
     theory/gfiniteautomata.h

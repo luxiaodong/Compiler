@@ -2,15 +2,18 @@
 #define GCONTEXTFREEGRAMMAR_H
 
 #include <QMap>
-#include "theory/gcontextsensitivegrammar.h"
+#include <QString>
+#include <QStringList>
+#include <QDebug>
+#include "theory/gproduction.h"
 
-// LL(1)
-// SLR    SDD SDT
+// LL(1) 文法.
+//
 
-class GContextFreeGrammar : public GContextSensitiveGrammar
+class GGrammarLL1
 {
 public:
-    GContextFreeGrammar();
+    GGrammarLL1();
     void test();
 
 private:
@@ -28,6 +31,7 @@ private:
     QStringList m_heads;
     QMap<QString, QStringList> m_firstSet;
     QMap<QString, QStringList> m_followSet;
+    QString m_startSymbol;
 };
 
 #endif // GCONTEXTFREEGRAMMAR_H
