@@ -25,13 +25,15 @@ private:
     void calculateFollowSet();
     bool calculateFollowSet(const QString& head); //返回m_followSet是否改动过
     void calculateSelectSet();
+    void collectTerminalSymbol();
 
 private:
     QList<GProductionII*> m_formulas;
-    QStringList m_heads;
+    QStringList m_heads; //非终结符号
     QMap<QString, QStringList> m_firstSet;
     QMap<QString, QStringList> m_followSet;
     QString m_startSymbol;
+    QStringList m_terminals; //终结符号
 };
 
 #endif // GCONTEXTFREEGRAMMAR_H

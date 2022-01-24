@@ -46,6 +46,7 @@ public:
     const QString& last(){return m_rightList.last();}
     const QString& index(int i){return m_rightList.at(i);}
 
+    QString production() const; //打印出产生式
     int size(){return m_rightList.size();}
     bool isEmpty(){return m_isEmpty;}
     void print();

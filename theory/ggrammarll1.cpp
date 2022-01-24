@@ -22,6 +22,15 @@ void GGrammarLL1::test()
 
 void GGrammarLL1::print()
 {
+    int maxCharCount = 0;
+    qDebug()<<"================================= production";
+    foreach(GProductionII* formula, m_formulas)
+    {
+        QString str = formula->production();
+        if(str.length() > maxCharCount) maxCharCount = str.length();
+        qDebug()<<str;
+    }
+
     qDebug()<<"================================= first";
 
     foreach(QString head, m_heads)
@@ -43,6 +52,69 @@ void GGrammarLL1::print()
     foreach(GProductionII* formula, m_formulas)
     {
         formula->print();
+    }
+
+    qDebug()<<"================================= prediction analysis table";
+    //预测分析表, 行是输入的终结符号, 列是非终结符号, 中间值是使用的产生式
+    this->collectTerminalSymbol();
+
+    maxCharCount += 2;
+    QString str = "|" + QString(maxCharCount,' ') + "|";
+    foreach(QString single, m_terminals)
+    {
+        int charCount = (maxCharCount - single.length())/2;
+        str += QString(charCount,' ');
+        str += single;
+        str += QString(maxCharCount - charCount - single.length(),' ');
+        str += QString("|");
+    }
+
+    QString line = QString( (maxCharCount+1)*(m_terminals.length()+1) + 1,'-');
+    qDebug()<<line;
+    qDebug()<<str;
+    qDebug()<<line;
+
+    foreach(QString head, m_heads)
+    {
+        QString str = "|";
+        int charCount = (maxCharCount - head.length())/2;
+        str += QString(charCount,' ');
+        str += head;
+        str += QString(maxCharCount - charCount - head.length(),' ');
+        str += QString("|");
+
+        QMap<QString, QString> map;
+        foreach(GProductionII* formula, m_formulas)
+        {
+            if(formula->head() == head) //找到了一个产生式
+            {
+                foreach(QString select, formula->m_selectList) //遍历产生式的select集
+                {
+                    map.insert( select,  formula->production() );
+                }
+            }
+        }
+
+        foreach(QString single, m_terminals)
+        {
+            QString value = map.value(single);
+            if(value.isEmpty())
+            {
+                str += QString(maxCharCount,' ');
+                str += QString("|");
+            }
+            else
+            {
+                int charCount = (maxCharCount - value.length())/2;
+                str += QString(charCount,' ');
+                str += value;
+                str += QString(maxCharCount - charCount - value.length(),' ');
+                str += QString("|");
+            }
+        }
+
+        qDebug()<<str;
+        qDebug()<<line;
     }
 }
 
@@ -73,7 +145,6 @@ void GGrammarLL1::create(const QStringList& list)
         m_followSet.insert(head, QStringList());
     }
 }
-
 
 // 非终结符的first集合计算
 void GGrammarLL1::calculateFirstSet()
@@ -255,6 +326,22 @@ void GGrammarLL1::calculateSelectSet()
         }
     }
 }
+
+void GGrammarLL1::collectTerminalSymbol()
+{
+    m_terminals.clear();
+    foreach(GProductionII* formula, m_formulas)
+    {
+        foreach(QString single, formula->m_selectList)
+        {
+            if(m_terminals.indexOf(single) == -1)
+            {
+                m_terminals.append(single);
+            }
+        }
+    }
+}
+
 
 bool GGrammarLL1::isContainEmpty(const QString& head) const
 {

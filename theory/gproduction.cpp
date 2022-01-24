@@ -25,10 +25,22 @@ bool GProductionII::isTerminal(QString str)
     return true;
 }
 
+
+QString GProductionII::production() const
+{
+    QString str = m_head+QString("->");
+    foreach(QString single, m_rightList)
+    {
+        str += single;
+    }
+    return str;
+}
+
 void GProductionII::print()
 {
-    qDebug()<<m_head<<" -> "<<m_rightList<<"  =>  "<<m_selectList;
+    qDebug()<<m_head<<"->"<<m_rightList<<"  =>  "<<m_selectList;
 }
+
 
 GProductionIII::GProductionIII(const QString& head, const QString& first, const QString& last, bool isLeftLinear)
     : m_head(head), m_first(first), m_last(last), m_isLeftLinear(isLeftLinear)
