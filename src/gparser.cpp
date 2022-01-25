@@ -255,6 +255,51 @@ GSyntaxNode* GParser::parseExpression()
     return node;
 }
 
+GSyntaxNode* GParser::parseExpressionBracket()
+{
+    GCalculateType calType;
+    GSyntaxNode* left = this->parseConstant();
+    while(true)
+    {
+        if(m_pCurrentToken->m_type == TokenType::LeftBracket)
+        {
+            this->getNextToken();
+            left->calculateType(&calType);
+            GSyntaxNode* right = this->parseExpression();
+            right->calculateType(&calType);
+
+            if(left->m_pType->isSameTypeKind(Kind_BuildIn) && right->m_pType->isSameTypeKind(Kind_Array))
+            {
+                GBuildInType* buildInType = dynamic_cast<GBuildInType*>(left->m_pType);
+                if(buildInType->isSameBuildInKind(Kind_Int))
+                {
+                    GSyntaxNode* temp = left;
+                    left = right;
+                    right = temp;
+                }
+            }
+
+            GBinaryNode* binNode = new GBinaryNode();
+            binNode->m_binOp = BinaryOperator::OP_PtrAdd;
+            binNode->m_pLeftNode = left;
+            binNode->m_pRightNode = right;
+
+            GUnaryNode* starNode = new GUnaryNode();
+            starNode->m_uOp = UnaryOperator::OP_Star;
+            starNode->m_pNode = binNode;
+            Q_ASSERT(m_pCurrentToken->m_type == TokenType::RightBracket);
+            this->getNextToken();
+            left = starNode;
+            continue;
+        }
+        else
+        {
+            break;
+        }
+    }
+    return left;
+}
+
 GSyntaxNode* GParser::parseExpressionAssign()
 {
     GSyntaxNode* left = this->parseExpressionEqual();
@@ -468,7 +513,8 @@ GSyntaxNode* GParser::parseExpressionUnary()
         return node;
     }
 
-    return this->parseConstant();
+//    return this->parseConstant();
+    return this->parseExpressionBracket();
 }
 
 GSyntaxNode* GParser::parseConstant()

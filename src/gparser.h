@@ -27,7 +27,8 @@ private:
     GSyntaxNode* parseExpressionAdd();
     GSyntaxNode* parseExpressionMul();
     GSyntaxNode* parseExpressionUnary();
-    GSyntaxNode* parseConstant();
+    GSyntaxNode* parseConstant();           //ParsePrimaryExpr
+    GSyntaxNode* parseExpressionBracket();  //ParsePostFixExpr
 
 private:
     GType* parseDeclarationSpec();
