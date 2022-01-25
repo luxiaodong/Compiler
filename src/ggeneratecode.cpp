@@ -46,19 +46,20 @@ void GGenerateCode::functionNode(GFunctionNode* node)
     m_assemblyCode += QString("_%1:\n").arg(m_currentFuncName);
 
     //给符号表设置地址
-    int stackSize = 0;
+    int offset = 0;
     foreach(GVariable* var, GSymbolTable::m_variables)
     {
-        stackSize += 8;
-        var->m_address = stackSize * -1;
+        offset += var->m_pType->m_size;
+        offset = this->alignTo(offset, var->m_pType->m_align);
+        var->m_address = -offset;
     }
 
-    stackSize = this->alignTo(stackSize, 16);
+    offset = this->alignTo(offset, 16);
 
     m_assemblyCode += "\tpush %rbp\n";
     m_assemblyCode += "\tmov %rsp, %rbp\n";
     //m_assemblyCode += "\tsub $32, %rsp\n";
-    m_assemblyCode += QString("\tsub $%1, %rsp\n").arg(stackSize);
+    m_assemblyCode += QString("\tsub $%1, %rsp\n").arg(offset);
 
     //更多的参数要压入栈, 暂不支持
     for(int i = 0; i < node->m_args.size(); ++i)
@@ -212,8 +213,7 @@ void GGenerateCode::assignNode(GAssignNode* node)
     this->genAddress(node->m_pLeftNode);
     this->push();
     node->m_pRightNode->generateCode(this);
-    this->pop("%rdi");
-    m_assemblyCode += "\tmov %rax, (%rdi)\n";
+    this->store(node->m_pType);
 }
 
 void GGenerateCode::declarationNode(GDeclarationNode* node)
@@ -238,7 +238,7 @@ void GGenerateCode::unaryNode(GUnaryNode* node)
     else if(node->m_uOp == UnaryOperator::OP_Star)
     {
         this->genAddress(node);
-        m_assemblyCode += "\tmov (%rax), %rax\n";
+        this->load(node->m_pType);
     }
     else if(node->m_uOp == UnaryOperator::OP_Amp)
     {
@@ -298,16 +298,40 @@ void GGenerateCode::binaryNode(GBinaryNode* node)
         m_assemblyCode += "\tmovzb %al, %rax\n";
         break;
     case BinaryOperator::OP_PtrAdd:
-        m_assemblyCode += QString("\timul $%1, %rdi\n").arg(node->m_pLeftNode->m_pType->m_size);
+        if(node->m_pLeftNode->m_pType->m_type == Kind_Array)
+        {
+            GArrayType *pType = dynamic_cast<GArrayType*>(node->m_pLeftNode->m_pType);
+            m_assemblyCode += QString("\timul $%1, %rdi\n").arg(pType->m_elementType->m_size);
+        }
+        else // if(node->m_pLeftNode->m_pType->m_type == Kind_Pointer)
+        {
+            m_assemblyCode += QString("\timul $%1, %rdi\n").arg(node->m_pLeftNode->m_pType->m_size);
+        }
         m_assemblyCode += "\tadd %rdi, %rax\n";
         break;
     case BinaryOperator::OP_PtrSub:
-        m_assemblyCode += QString("\timul $%1, %rdi\n").arg(node->m_pLeftNode->m_pType->m_size);
+        if(node->m_pLeftNode->m_pType->m_type == Kind_Array)
+        {
+            GArrayType *pType = dynamic_cast<GArrayType*>(node->m_pLeftNode->m_pType);
+            m_assemblyCode += QString("\timul $%1, %rdi\n").arg(pType->m_elementType->m_size);
+        }
+        else // if(node->m_pLeftNode->m_pType->m_type == Kind_Pointer)
+        {
+            m_assemblyCode += QString("\timul $%1, %rdi\n").arg(node->m_pLeftNode->m_pType->m_size);
+        }
         m_assemblyCode += "\tsub %rdi, %rax\n";
         break;
     case BinaryOperator::OP_PtrDiff:
         m_assemblyCode += "\tsub %rdi, %rax\n";
-        m_assemblyCode += QString("\tmov $%1, %rdi\n").arg(node->m_pLeftNode->m_pType->m_size);
+        if(node->m_pLeftNode->m_pType->m_type == Kind_Array)
+        {
+            GArrayType *pType = dynamic_cast<GArrayType*>(node->m_pLeftNode->m_pType);
+            m_assemblyCode += QString("\tmov $%1, %rdi\n").arg(pType->m_elementType->m_size);
+        }
+        else  // if(node->m_pLeftNode->m_pType->m_type == Kind_Pointer)
+        {
+            m_assemblyCode += QString("\tmov $%1, %rdi\n").arg(node->m_pLeftNode->m_pType->m_size);
+        }
         m_assemblyCode += "\tcqo\n";
         m_assemblyCode += "\tidiv %rdi\n";
         break;
@@ -330,8 +354,8 @@ void GGenerateCode::constantNode(GConstantNode* node)
 
 void GGenerateCode::variableNode(GVariableNode* node)
 {
-    m_assemblyCode += QString("\tlea %1(%rbp), %rax\n").arg(GSymbolTable::getAddress(node->m_name));
-    m_assemblyCode += QString("\tmov (%rax), %rax\n");
+    genAddress(node);
+    load(node->m_pType);
 }
 
 void GGenerateCode::genAddress(GSyntaxNode* node)
@@ -349,6 +373,25 @@ void GGenerateCode::genAddress(GSyntaxNode* node)
         {
             unaryNode->m_pNode->generateCode(this);
         }
+    }
+}
+
+void GGenerateCode::load(GType* pType)
+{
+    if(pType->isSameTypeKind(Kind_Array)) return ;
+
+    if(pType->m_size == 8)
+    {
+        m_assemblyCode += QString("\tmov (%rax), %rax\n");
+    }
+}
+
+void GGenerateCode::store(GType* pType)
+{
+    this->pop("%rdi");
+    if(pType->m_size == 8)
+    {
+        m_assemblyCode += QString("\tmov %rax, (%rdi)\n");
     }
 }
 

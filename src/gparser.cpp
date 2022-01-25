@@ -340,7 +340,7 @@ GSyntaxNode* GParser::parseExpressionAdd()
             BinaryOperator binOp = BinaryOperator::OP_NULL;
             if(currentToken->m_type == TokenType::Plus)
             {
-                if(left->m_pType->isSameTypeKind(Kind_Pointer) && right->m_pType->isSameTypeKind(Kind_BuildIn))
+                if((left->m_pType->isSameTypeKind(Kind_Pointer) || left->m_pType->isSameTypeKind(Kind_Array)) && right->m_pType->isSameTypeKind(Kind_BuildIn))
                 {
                     GBuildInType* pType = dynamic_cast<GBuildInType*>(right->m_pType);
                     if(pType->isSameBuildInKind(BuildInKind::Kind_Int))
@@ -348,7 +348,7 @@ GSyntaxNode* GParser::parseExpressionAdd()
                         binOp = BinaryOperator::OP_PtrAdd;
                     }
                 }
-                else if(left->m_pType->isSameTypeKind(Kind_BuildIn) && right->m_pType->isSameTypeKind(Kind_Pointer))
+                else if(left->m_pType->isSameTypeKind(Kind_BuildIn) && (right->m_pType->isSameTypeKind(Kind_Pointer) || right->m_pType->isSameTypeKind(Kind_Array)))
                 {
                     GBuildInType* pType = dynamic_cast<GBuildInType*>(left->m_pType);
                     {
@@ -373,7 +373,7 @@ GSyntaxNode* GParser::parseExpressionAdd()
             }
             else if(currentToken->m_type == TokenType::Minus)
             {
-                if(left->m_pType->isSameTypeKind(Kind_Pointer) && right->m_pType->isSameTypeKind(Kind_BuildIn))
+                if((left->m_pType->isSameTypeKind(Kind_Pointer) || left->m_pType->isSameTypeKind(Kind_Array)) && right->m_pType->isSameTypeKind(Kind_BuildIn))
                 {
                     GBuildInType* pType = dynamic_cast<GBuildInType*>(right->m_pType);
                     if(pType->isSameBuildInKind(BuildInKind::Kind_Int))
@@ -381,7 +381,7 @@ GSyntaxNode* GParser::parseExpressionAdd()
                         binOp = BinaryOperator::OP_PtrSub;
                     }
                 }
-                else if(left->m_pType->isSameTypeKind(Kind_Pointer) && right->m_pType->isSameTypeKind(Kind_Pointer))
+                else if((left->m_pType->isSameTypeKind(Kind_Pointer) || left->m_pType->isSameTypeKind(Kind_Array)) && (right->m_pType->isSameTypeKind(Kind_Pointer) || right->m_pType->isSameTypeKind(Kind_Array)))
                 {
                     binOp = BinaryOperator::OP_PtrDiff;
                 }
@@ -449,6 +449,7 @@ GSyntaxNode* GParser::parseExpressionUnary()
        m_pCurrentToken->m_type == TokenType::Amp)
     {
         GUnaryNode* node = new GUnaryNode();
+        node->m_pToken = m_pCurrentToken;
         node->m_uOp = UnaryOperator::OP_Plus;
         if(m_pCurrentToken->m_type  == TokenType::Minus)
         {
@@ -583,6 +584,17 @@ GType* GParser::parseTypeSuffix(GType* pType)
         Q_ASSERT(m_pCurrentToken->m_type == TokenType::RightParent);
         this->getNextToken();
         return pFunType;
+    }
+    else if(m_pCurrentToken->m_type == TokenType::LeftBracket)
+    {
+        this->getNextToken();
+        Q_ASSERT(m_pCurrentToken->m_type == TokenType::Num);
+        int num = m_pCurrentToken->m_context.toInt();
+        this->getNextToken();
+        Q_ASSERT(m_pCurrentToken->m_type == TokenType::RightBracket);
+        this->getNextToken();
+        GType* arrayType = this->parseTypeSuffix(pType);
+        return new GArrayType(arrayType, num);
     }
 
     return pType;

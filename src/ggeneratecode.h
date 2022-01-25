@@ -33,6 +33,8 @@ public:
 
 private:
     void genAddress(GSyntaxNode* node);
+    void load(GType* pType);
+    void store(GType* pType);
 
     void push();
     void pop(QString reg);

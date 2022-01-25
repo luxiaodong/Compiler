@@ -1,4 +1,20 @@
 
+int sum(int n)
+{
+  int s = 0, i;
+  for(i =1; i<=n; i=i+1)
+  {
+    s = s + i;
+  }
+  return s;
+}
+
+int fib(int n)
+{
+  if(n <= 1) return 1;
+  return fib(n-1) + fib(n-2);
+}
+
 int calculate() 
 {
   check(14, ({ 1 + 2 + 4 -2 +9  ;}));
@@ -40,29 +56,29 @@ int calculate()
   check(8, ({ int x=3; int *y = &x;  sizeof y;}));
   check(8, ({ int x=3; int *y = &x;  sizeof 10;}));
   check(8, ({ int x=3; int *y = &x;  sizeof -10;}));
+
+  check(4, ({int a[3]; int *p = &a; *p = 4; *a;})); 
+  check(4, ({int a[3]; int *c = a; *c = 4; *(c+1) = 5; *(c+2) = 6; *c;}));
+  check(4, ({int a[3]; *a = 4; *(a+1) = 5; *(a+2) = 6; *a;}));
+  check(5, ({int a[3]; *a = 4; *(a+1) = 5; *(a+2) = 6; *(a+1);}));
+  check(6, ({int a[3]; *a = 4; *(a+1) = 5; *(a+2) = 6; *(a+2);}));
+  check(4, ({int a[3]; int *c = a; *c = 4; *(c+1) = 5; *(c+2) = 6; *a;}));
+  check(5, ({int a[3]; int *c = a; *c = 4; *(c+1) = 5; *(c+2) = 6; *(a+1);}));
+  check(6, ({int a[3]; int *c = a; *c = 4; *(c+1) = 5; *(c+2) = 6; *(a+2);}));
+  check(0, ({int b[2][3]; int *c = b; *c = 0; *(c+1) = 1; *(c+2) = 2; *(c+3) = 3;*(c+4) = 4; *(c+5) = 5;**b;}));
+  check(1, ({int b[2][3]; int *c = b; *c = 0; *(c+1) = 1; *(c+2) = 2; *(c+3) = 3;*(c+4) = 4; *(c+5) = 5;*(*b+1);}));
+  check(2, ({int b[2][3]; int *c = b; *c = 0; *(c+1) = 1; *(c+2) = 2; *(c+3) = 3;*(c+4) = 4; *(c+5) = 5;*(*b+2);}));
+  check(3, ({int b[2][3]; int *c = b; *c = 0; *(c+1) = 1; *(c+2) = 2; *(c+3) = 3;*(c+4) = 4; *(c+5) = 5;*(*b+3);}));
+  check(4, ({int b[2][3]; int *c = b; *c = 0; *(c+1) = 1; *(c+2) = 2; *(c+3) = 3;*(c+4) = 4; *(c+5) = 5;*(*b+4);}));
+  check(5, ({int b[2][3]; int *c = b; *c = 0; *(c+1) = 1; *(c+2) = 2; *(c+3) = 3;*(c+4) = 4; *(c+5) = 5;*(*b+5);}));
+  
+  check(28, sum(7));
+  check(34, fib(8));
   return 0;
-}
-
-int sum(int n)
-{
-  int s = 0, i;
-  for(i =1; i<=n; i=i+1)
-  {
-    s = s + i;
-  }
-  return s;
-}
-
-int fib(int n)
-{
-  if(n <= 1) return 1;
-  return fib(n-1) + fib(n-2);
 }
 
 int test()
 {
   calculate();
-  check(28, sum(7));
-  check(34, fib(8));
   return 0;
 }

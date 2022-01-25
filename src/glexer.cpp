@@ -137,6 +137,16 @@ bool GLexer::nextToken()
         token->m_type = TokenType::RightBrace;
         nextChar();
     }
+    else if(m_currentChar == '[')
+    {
+        token->m_type = TokenType::LeftBracket;
+        nextChar();
+    }
+    else if(m_currentChar == ']')
+    {
+        token->m_type = TokenType::RightBracket;
+        nextChar();
+    }
     else if(m_currentChar == '=')
     {
         token->m_type = TokenType::Assign;

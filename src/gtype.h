@@ -7,8 +7,9 @@
 enum TypeKind
 {
     Kind_BuildIn,
-    Kind_Pointer,
     Kind_Function,
+    Kind_Pointer,
+    Kind_Array,
 };
 
 enum BuildInKind
@@ -24,9 +25,11 @@ public:
     bool isSameTypeKind(TypeKind kind);
 
 public:
-    TypeKind m_type;
     int m_size;
     int m_align;
+
+//private:
+    TypeKind m_type;
 };
 
 class GBuildInType : public GType
@@ -45,7 +48,7 @@ class GPointerType : public GType
 {
 public:
     GPointerType(GType* baseType) : GType(TypeKind::Kind_Pointer, 8, 8),m_baseType(baseType){}
-private:
+public:
     GType* m_baseType;
 };
 
@@ -65,5 +68,15 @@ public:
 private:
     GType* m_pReturnType; //返回值类型
 };
+
+class GArrayType : public GType
+{
+public:
+    GArrayType(GType* baseType, int length) : GType(TypeKind::Kind_Array, length*baseType->m_size, baseType->m_align), m_elementType(baseType), m_length(length){}
+public:
+    int m_length;
+    GType* m_elementType;
+};
+
 
 #endif // GTYPE_H

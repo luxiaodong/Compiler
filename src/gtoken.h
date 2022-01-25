@@ -34,6 +34,8 @@ enum TokenType{
     Int,
     Amp, //&
     SizeOf,
+    LeftBracket,
+    RightBracket,
     Eof,
 };
 

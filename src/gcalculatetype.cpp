@@ -128,7 +128,13 @@ void GCalculateType::unaryNode(GUnaryNode* node)
     case UnaryOperator::OP_Star:
         if(node->m_pNode->m_pType->m_type == TypeKind::Kind_Pointer)
         {
-            node->m_pType = node->m_pNode->m_pType;
+            GPointerType* pType = dynamic_cast<GPointerType*>(node->m_pNode->m_pType);
+            node->m_pType = pType->m_baseType;
+        }
+        else if(node->m_pNode->m_pType->m_type == TypeKind::Kind_Array)
+        {
+            GArrayType* arrayType = dynamic_cast<GArrayType*>(node->m_pNode->m_pType);
+            node->m_pType = arrayType->m_elementType;
         }
         break;
     case UnaryOperator::OP_Amp:
