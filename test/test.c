@@ -15,6 +15,23 @@ int fia(int n)
   return fia(n-1) + fia(n-2);
 }
 
+char add_char(char a, char b, char c,char d,char e,char f) {
+  return a+b+c+d+e+f;
+}
+
+short add_short(short a, short b, short c,short d,short e,short f) {
+  return a+b+c+d+e+f;
+}
+
+int add_int(int a, int b, int c,int d,int e,int f) {
+  return a+b+c+d+e+f;
+}
+
+long add_long(long a, long b, long c,int d,long e,char f) {
+  return a+b+c+d+e+f;
+}
+
+
 int calculate() 
 {
   check(14, ({ 1 + 2 + 4 -2 +9  ;}));
@@ -79,6 +96,9 @@ int calculate()
 
 int test()
 {
-  calculate();
+  check(1+2+3+4+5+6, add_char(1,2,3,4,5,6));
+  check(1+2+3+4+5+6, add_short(1,2,3,4,5,6));
+  check(1+2+3+4+5+6, add_int(1,2,3,4,5,6));
+  check(1+2+3+4+5+6, add_long(1,2,3,4,5,6));
   return 0;
 }

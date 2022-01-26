@@ -28,7 +28,7 @@ void GCalculateType::functionCallNode(GFunctionCallNode* node)
     {
         args->calculateType(this);
     }
-    node->m_pType = GBuildInType::m_intType;
+    node->m_pType = GBuildInType::m_longType;
 }
 
 void GCalculateType::returnNode(GReturnNode* node)
@@ -167,7 +167,7 @@ void GCalculateType::binaryNode(GBinaryNode* node)
     case BinaryOperator::OP_Lesser:
     case BinaryOperator::OP_LesserEqual:
     case BinaryOperator::OP_PtrDiff:
-        node->m_pType = GBuildInType::m_intType;
+        node->m_pType = GBuildInType::m_longType;
         break;
     default:
         Q_ASSERT(false);
@@ -182,7 +182,7 @@ void GCalculateType::sizeofNode(GSizeofNode* node)
 
 void GCalculateType::constantNode(GConstantNode* node)
 {
-    node->m_pType = GBuildInType::m_intType;
+    node->m_pType = GBuildInType::m_longType;
 }
 
 void GCalculateType::variableNode(GVariableNode* node)

@@ -225,7 +225,7 @@ bool GLexer::nextToken()
         int pos = m_cursor - 1;
         do{
             nextChar();
-        }while(m_currentChar.isLetterOrNumber());
+        }while(this->isIdentifier(m_currentChar));
         token->m_context = m_source.mid(pos, m_cursor - pos - 1);
 
         if(token->m_context == QString("if"))
@@ -252,9 +252,21 @@ bool GLexer::nextToken()
         {
             token->m_type = TokenType::Return;
         }
+        else if(token->m_context == QString("char"))
+        {
+            token->m_type = TokenType::Char;
+        }
+        else if(token->m_context == QString("short"))
+        {
+            token->m_type = TokenType::Short;
+        }
         else if(token->m_context == QString("int"))
         {
             token->m_type = TokenType::Int;
+        }
+        else if(token->m_context == QString("long"))
+        {
+            token->m_type = TokenType::Long;
         }
         else if(token->m_context == QString("sizeof"))
         {
@@ -300,5 +312,12 @@ bool GLexer::isKeyword(const QString& str) const
     static QStringList keys = (QStringList()<<"auto"<<"double"<<"int"<<"struct"<<"break"<<"else"<<"long"<<"switch"<<"case"<<"enum"<<"register"<<"typedef"<<"char"<<"extern"<<"return"<<"union"<<"const"<<"float"<<"short"<<"unsigned"<<"for"<<"signed"<<"void"<<"default"<<"goto"<<"sizeof"<<"volatile"<<"do"<<"if"<<"static"<<"while"<<"continue");
     if (keys.indexOf(str) == -1) return false;
     return true;
+}
+
+bool GLexer::isIdentifier(const QChar& c) const
+{
+    if(c.isLetterOrNumber()) return true;
+    if(c == '_') return true;
+    return false;
 }
 

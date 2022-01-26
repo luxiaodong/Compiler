@@ -31,7 +31,10 @@ enum TokenType{
     For,
     Comma,
     Return,
+    Char,
+    Short,
     Int,
+    Long,
     Amp, //&
     SizeOf,
     LeftBracket,

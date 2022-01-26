@@ -229,7 +229,7 @@ public:
     virtual void traverse(GSyntaxTreeTraverse* );
 
 public:
-    int m_value;
+    long m_value;
 };
 
 class GVariableNode : public GSyntaxNode

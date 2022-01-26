@@ -272,7 +272,7 @@ GSyntaxNode* GParser::parseExpressionBracket()
             if(left->m_pType->isSameTypeKind(Kind_BuildIn) && right->m_pType->isSameTypeKind(Kind_Array))
             {
                 GBuildInType* buildInType = dynamic_cast<GBuildInType*>(left->m_pType);
-                if(buildInType->isSameBuildInKind(Kind_Int))
+                if(buildInType->isIntegerKind())
                 {
                     GSyntaxNode* temp = left;
                     left = right;
@@ -389,7 +389,7 @@ GSyntaxNode* GParser::parseExpressionAdd()
                 if((left->m_pType->isSameTypeKind(Kind_Pointer) || left->m_pType->isSameTypeKind(Kind_Array)) && right->m_pType->isSameTypeKind(Kind_BuildIn))
                 {
                     GBuildInType* pType = dynamic_cast<GBuildInType*>(right->m_pType);
-                    if(pType->isSameBuildInKind(BuildInKind::Kind_Int))
+                    if(pType->isIntegerKind())
                     {
                         binOp = BinaryOperator::OP_PtrAdd;
                     }
@@ -398,7 +398,7 @@ GSyntaxNode* GParser::parseExpressionAdd()
                 {
                     GBuildInType* pType = dynamic_cast<GBuildInType*>(left->m_pType);
                     {
-                        if(pType->isSameBuildInKind(BuildInKind::Kind_Int))
+                        if(pType->isIntegerKind())
                         {
                             GSyntaxNode* temp = left;
                             left = right;
@@ -411,7 +411,7 @@ GSyntaxNode* GParser::parseExpressionAdd()
                 {
                     GBuildInType* lType = dynamic_cast<GBuildInType*>(left->m_pType);
                     GBuildInType* rType = dynamic_cast<GBuildInType*>(right->m_pType);
-                    if(lType->isSameBuildInKind(BuildInKind::Kind_Int) && rType->isSameBuildInKind(BuildInKind::Kind_Int))
+                    if(lType->isIntegerKind() && rType->isIntegerKind())
                     {
                         binOp = BinaryOperator::OP_Add;
                     }
@@ -422,7 +422,7 @@ GSyntaxNode* GParser::parseExpressionAdd()
                 if((left->m_pType->isSameTypeKind(Kind_Pointer) || left->m_pType->isSameTypeKind(Kind_Array)) && right->m_pType->isSameTypeKind(Kind_BuildIn))
                 {
                     GBuildInType* pType = dynamic_cast<GBuildInType*>(right->m_pType);
-                    if(pType->isSameBuildInKind(BuildInKind::Kind_Int))
+                    if(pType->isIntegerKind())
                     {
                         binOp = BinaryOperator::OP_PtrSub;
                     }
@@ -435,7 +435,7 @@ GSyntaxNode* GParser::parseExpressionAdd()
                 {
                     GBuildInType* lType = dynamic_cast<GBuildInType*>(left->m_pType);
                     GBuildInType* rType = dynamic_cast<GBuildInType*>(right->m_pType);
-                    if(lType->isSameBuildInKind(BuildInKind::Kind_Int) && rType->isSameBuildInKind(BuildInKind::Kind_Int))
+                    if(lType->isIntegerKind() && rType->isIntegerKind())
                     {
                         binOp = BinaryOperator::OP_Sub;
                     }
@@ -576,12 +576,26 @@ GSyntaxNode* GParser::parseConstant()
 
 GType* GParser::parseDeclarationSpec()
 {
-    if(m_pCurrentToken->m_type == TokenType::Int)
+    if(m_pCurrentToken->m_type == TokenType::Char)
+    {
+        this->getNextToken();
+        return GBuildInType::m_charType;
+    }
+    else if(m_pCurrentToken->m_type == TokenType::Short)
+    {
+        this->getNextToken();
+        return GBuildInType::m_shortType;
+    }
+    else if(m_pCurrentToken->m_type == TokenType::Int)
     {
         this->getNextToken();
         return GBuildInType::m_intType;
     }
-
+    else if(m_pCurrentToken->m_type == TokenType::Long)
+    {
+        this->getNextToken();
+        return GBuildInType::m_longType;
+    }
     return NULL;
 }
 
@@ -649,7 +663,10 @@ GType* GParser::parseTypeSuffix(GType* pType)
 
 bool GParser::isValidType(TokenType type)
 {
+    if(type == TokenType::Char) return true;
+    if(type == TokenType::Short) return true;
     if(type == TokenType::Int) return true;
+    if(type == TokenType::Long) return true;
     return false;
 }
 

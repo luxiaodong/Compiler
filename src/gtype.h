@@ -14,7 +14,10 @@ enum TypeKind
 
 enum BuildInKind
 {
+    Kind_Char,
+    Kind_Short,
     Kind_Int,
+    Kind_Long,
 };
 
 class GType
@@ -35,11 +38,17 @@ public:
 class GBuildInType : public GType
 {
 public:
+    static GBuildInType* m_charType;
+    static GBuildInType* m_shortType;
     static GBuildInType* m_intType;
+    static GBuildInType* m_longType;
+
 public:
     GBuildInType(BuildInKind bKind, int size, int align):GType(TypeKind::Kind_BuildIn, size, align),m_buildInKind(bKind){}
     BuildInKind getBuildInKind() const {return m_buildInKind;}
     bool isSameBuildInKind(BuildInKind kind);
+    bool isIntegerKind();
+
 private:
     BuildInKind m_buildInKind;
 };
