@@ -33,6 +33,9 @@ GSyntaxNode* GParser::parseProgram()
 GSyntaxNode* GParser::parseFunction()
 {
     GFunctionNode* node = new GFunctionNode();
+    m_pLocals = &node->m_locals;
+    m_localMaps.clear();
+
     GType* baseType = this->parseDeclarationSpec();
     GToken*  pToken;
     node->m_pType = this->parseDeclarator(baseType, pToken);
@@ -43,9 +46,7 @@ GSyntaxNode* GParser::parseFunction()
     {
         QString name = funType->m_paramList.at(i)->m_pToken->m_context;
         GType* pType = funType->m_paramList.at(i)->m_pType;
-        GSymbolTable::addVariable(name, pType);
-        GVariable* var = GSymbolTable::getVariable(name);
-        node->m_args.append(var);
+        node->m_args.append( this->createVariable(name, pType));
     }
     // node->m_pType = funType;
     Q_ASSERT(m_pCurrentToken->m_type == TokenType::LeftBrace);
@@ -205,15 +206,15 @@ GSyntaxNode* GParser::parseSentence()
         {
             GToken* pToken;
             GType* pType = this->parseDeclarator(baseType, pToken);
-            GSymbolTable::addVariable(pToken->m_context, pType);
+            GVariable* var = this->createVariable(pToken->m_context, pType);
+
             if(m_pCurrentToken->m_type == TokenType::Assign)
             {
+                this->getNextToken();
                 GVariableNode* varNode = new GVariableNode();
-                varNode->m_name = pToken->m_context;
-                varNode->m_pType = pType;
+                varNode->m_pVar = var;
                 GAssignNode* assign = new GAssignNode();
                 assign->m_pLeftNode = varNode;
-                this->getNextToken();
                 assign->m_pRightNode = this->parseExpression();
                 node->m_assignList.append(assign);
             }
@@ -549,11 +550,11 @@ GSyntaxNode* GParser::parseConstant()
             return this->parseFunctionCall();
         }
 
+        GVariable* var = m_localMaps.value(m_pCurrentToken->m_context, NULL);
+        Q_ASSERT(var);
         GVariableNode* node = new GVariableNode();
         node->m_pToken = m_pCurrentToken;
-        node->m_name = m_pCurrentToken->m_context;
-         GSymbolTable::addVariable(node->m_name, GBuildInType::m_intType); //添加到符号表
-//        Q_ASSERT(false); //这里不可能走到了, 只有单个变量名, 没有类型
+        node->m_pVar = var;
         this->getNextToken();
         return node;
     }
@@ -650,6 +651,15 @@ bool GParser::isValidType(TokenType type)
 {
     if(type == TokenType::Int) return true;
     return false;
+}
+
+GVariable* GParser::createVariable(const QString& name, GType* pType)
+{
+    GVariable* var = new GVariable(name, pType);
+//    m_pLocals->append(var);
+    m_pLocals->prepend(var);
+    m_localMaps.insert(name, var);
+    return var;
 }
 
 void GParser::getNextToken()

@@ -1,5 +1,4 @@
 #include "gcalculatetype.h"
-#include "src/gsymboltable.h"
 
 GCalculateType::GCalculateType()
 {}
@@ -188,6 +187,5 @@ void GCalculateType::constantNode(GConstantNode* node)
 
 void GCalculateType::variableNode(GVariableNode* node)
 {
-    GVariable* pVar = GSymbolTable::getVariable(node->m_name);
-    node->m_pType = pVar->m_pType;
+    node->m_pType = node->m_pVar->m_pType;
 }

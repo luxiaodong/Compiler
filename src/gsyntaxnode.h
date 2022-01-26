@@ -238,7 +238,7 @@ public:
     virtual ~GVariableNode(){}
     virtual void traverse(GSyntaxTreeTraverse* );
 public:
-    QString m_name;
+    GVariable* m_pVar;
 };
 
 #endif // GSYNTAXNODE_H

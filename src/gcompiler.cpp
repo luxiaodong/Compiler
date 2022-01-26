@@ -49,7 +49,7 @@ void GCompiler::readText(const QString& text)
     parser.m_pTree->m_pRoot->generateCode(&genCode);
     genCode.printCode();
 
-    GSymbolTable::printTable();
+//    GSymbolTable::printTable();
 }
 
 void GCompiler::test()

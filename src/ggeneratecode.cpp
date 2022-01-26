@@ -3,7 +3,6 @@
 #include <QDir>
 #include <QFile>
 #include <QTextStream>
-#include "src/gsymboltable.h"
 
 const char *Reg64[6] = {"%rdi", "%rsi", "%rdx", "%rcx", "%r8", "%r9"};
 
@@ -47,13 +46,12 @@ void GGenerateCode::functionNode(GFunctionNode* node)
 
     //给符号表设置地址
     int offset = 0;
-    foreach(GVariable* var, GSymbolTable::m_variables)
+    foreach(GVariable* var, node->m_locals)
     {
         offset += var->m_pType->m_size;
         offset = this->alignTo(offset, var->m_pType->m_align);
         var->m_address = -offset;
     }
-
     offset = this->alignTo(offset, 16);
 
     m_assemblyCode += "\tpush %rbp\n";
@@ -363,8 +361,7 @@ void GGenerateCode::genAddress(GSyntaxNode* node)
     GVariableNode* varNode = dynamic_cast<GVariableNode*>(node);
     if(varNode)
     {
-        GVariable* var = GSymbolTable::getVariable(varNode->m_name);
-        m_assemblyCode += QString("\tlea %1(%rbp), %rax\n").arg(var->m_address);
+        m_assemblyCode += QString("\tlea %1(%rbp), %rax\n").arg(varNode->m_pVar->m_address);
     }
     else
     {

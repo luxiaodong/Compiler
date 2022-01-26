@@ -8,10 +8,11 @@ class GVariable
 {
 public:
     GVariable();
+    GVariable(const QString& name, GType* pType);
 
 public:
     GType* m_pType;
-    QString m_name;
+    const QString m_name;
     int m_address;
 };
 

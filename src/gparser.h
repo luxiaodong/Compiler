@@ -5,7 +5,6 @@
 #include "src/glexer.h"
 #include "src/gsyntaxnode.h"
 #include "src/gsyntaxtree.h"
-#include "src/gsymboltable.h"
 #include "src/gtype.h"
 
 class GParser
@@ -39,9 +38,14 @@ private:
     bool isValidType(TokenType type);
     void getNextToken();
     GToken* lookNextToken();
+    GVariable* createVariable(const QString& name, GType* pType);
 
 public:
     GSyntaxTree* m_pTree;
+
+private:
+    QList<GVariable*> *m_pLocals; //指向函数的local变量
+    QMap<QString, GVariable*> m_localMaps; //局部变量
 
 private:
     const GLexer m_lexer;
