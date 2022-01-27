@@ -103,12 +103,12 @@ int test()
   check(2, ({short x; sizeof(x);}));
   check(4, ({int x; sizeof(x);}));
   check(8, ({long x; sizeof(x);}));
-  // check(-23, ({int x = 4567456745; char *p = &x; *p;}));
-  // check(-37, ({int x = 4567456745; char *p = &x; *(p+1);}));
-  // check(61, ({int x = 4567456745; char *p = &x; *(p+2);}));
-  // check(16, ({int x = 4567456745; char *p = &x; *(p+3);}));
-  // check(-9239, ({int x = 4567456745; short *p = &x; *p;}));
-  // check(4157, ({int x = 4567456745; short *p = &x; *(p+1);}));
+  check(-23, ({int x = 4567456745; char *p = &x; *p;}));
+  check(-37, ({int x = 4567456745; char *p = &x; *(p+1);}));
+  check(61, ({int x = 4567456745; char *p = &x; *(p+2);}));
+  check(16, ({int x = 4567456745; char *p = &x; *(p+3);}));
+  check(-9239, ({int x = 4567456745; short *p = &x; *p;}));
+  check(4157, ({int x = 4567456745; short *p = &x; *(p+1);}));
 
   check(4, ({int a[3]; int *p = &a; *p = 4; *a;}));
   check(4, ({int a[3]; int *x = a; *x = 4; *(x+1) = 5; *(x+2) = 6; *x;}));

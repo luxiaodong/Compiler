@@ -567,9 +567,9 @@ GSyntaxNode* GParser::parseConstant()
     }
 
     GConstantNode* node = new GConstantNode();
-    node->m_pToken = m_pCurrentToken;
-    node->m_value = m_pCurrentToken->m_context.toInt();
-//qDebug()<<"------>"<<m_pCurrentToken->m_context;
+    node->m_pToken = m_pCurrentToken;    
+//qDebug()<<"---------->"<<m_pCurrentToken->m_context;
+    node->m_value = m_pCurrentToken->m_context.toLong();
     this->getNextToken();
     return node;
 }
@@ -650,7 +650,7 @@ GType* GParser::parseTypeSuffix(GType* pType)
     {
         this->getNextToken();
         Q_ASSERT(m_pCurrentToken->m_type == TokenType::Num);
-        int num = m_pCurrentToken->m_context.toInt();
+        int num = m_pCurrentToken->m_context.toLong();
         this->getNextToken();
         Q_ASSERT(m_pCurrentToken->m_type == TokenType::RightBracket);
         this->getNextToken();
