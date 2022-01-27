@@ -28,10 +28,17 @@ public:
     GProduction();
     static QString emptySymbol(){return "@";}
     static QString terminalSymbol(){return "#";}
+    static QString partitionSymbol(){return "!";} //用于LR0文法
 
 private:
     QStringList m_leftList;
     QStringList m_rightList;
+};
+
+class GProductionI
+{
+public:
+    GProductionI();
 };
 
 // 2型文法
@@ -45,6 +52,9 @@ public:
     const QString& first(){return m_rightList.first();}
     const QString& last(){return m_rightList.last();}
     const QString& index(int i){return m_rightList.at(i);}
+    int indexOf(const QString& str){return m_rightList.indexOf(str);}
+    int indexOf(const QString& str, int from){return m_rightList.indexOf(str, from);}
+
 
     QString production() const; //打印出产生式
     int size(){return m_rightList.size();}

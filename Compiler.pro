@@ -22,6 +22,7 @@ SOURCES += main.cpp \
     src/gsyntaxnode.cpp \
     src/gtype.cpp \
     src/gvariable.cpp \
+    theory/ggrammarlr0.cpp \
     theory/gproduction.cpp \
     theory/ggrammarll1.cpp \
     theory/gregulargraamar.cpp \
@@ -50,6 +51,7 @@ HEADERS += \
     src/gsyntaxnode.h \
     src/gtype.h \
     src/gvariable.h \
+    theory/ggrammarlr0.h \
     theory/gproduction.h \
     theory/ggrammarll1.h \
     theory/gregulargraamar.h \

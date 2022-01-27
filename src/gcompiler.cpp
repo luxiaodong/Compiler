@@ -3,10 +3,10 @@
 #include <QFile>
 #include <QDebug>
 #include <QDir>
-
 #include "src/ggeneratecode.h"
 #include "src/gcalculatetype.h"
 #include "theory/ggrammarll1.h"
+#include "theory/ggrammarlr0.h"
 
 GCompiler::GCompiler()
 {
@@ -69,10 +69,11 @@ void GCompiler::test()
 //    this->readText("s=0;i=0;do{s=s+i;i=i+1;}while(i<11); s;");
 //    this->readText("s=0;for(i=0;i<10;i=i+1) s=s+i; s;");
 
-    QString filePath = QDir::currentPath() + QString("/../Compiler/test/test.c");
-    this->readFile(filePath);
+//    QString filePath = QDir::currentPath() + QString("/../Compiler/test/test.c");
+//    this->readFile(filePath);
 
 //    GGrammarLL1 parser;
-//    parser.test();
+    GGrammarLR0 parser;
+    parser.test();
 }
 
