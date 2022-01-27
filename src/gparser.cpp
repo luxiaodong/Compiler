@@ -673,8 +673,8 @@ bool GParser::isValidType(TokenType type)
 GVariable* GParser::createVariable(const QString& name, GType* pType)
 {
     GVariable* var = new GVariable(name, pType);
-//    m_pLocals->append(var);
-    m_pLocals->prepend(var);
+    m_pLocals->append(var);
+//    m_pLocals->prepend(var);
     m_localMaps.insert(name, var);
     return var;
 }
