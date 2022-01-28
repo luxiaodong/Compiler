@@ -293,6 +293,13 @@ GSyntaxNode* GParser::parseExpressionBracket()
             left = starNode;
             continue;
         }
+        else if(m_pCurrentToken->m_type == TokenType::Dot)
+        {
+            this->getNextToken();
+            GSyntaxNode* pNode = this->parseStructAccessNode(left);
+            left = pNode;
+            continue;
+        }
         else
         {
             break;
@@ -518,6 +525,32 @@ GSyntaxNode* GParser::parseExpressionUnary()
     return this->parseExpressionBracket();
 }
 
+GSyntaxNode* GParser::parseStructAccessNode(GSyntaxNode* left)
+{
+    GCalculateType calType;
+    left->calculateType(&calType);
+    Q_ASSERT(left->m_pType->isSameTypeKind(Kind_StructUnion));
+
+    GStructType* pStructType = dynamic_cast<GStructType*>(left->m_pType);
+    GFiled* pFiled = NULL;
+    foreach(GFiled* filed, pStructType->m_fileds)
+    {
+        if(m_pCurrentToken->m_context == filed->m_pToken->m_context)
+        {
+            pFiled = filed;
+            break;
+        }
+    }
+
+    Q_ASSERT(pFiled != NULL);
+    GStructNode* pNode = new GStructNode();
+    pNode->m_pNode = left;
+    pNode->m_pFiled = pFiled;
+    Q_ASSERT(m_pCurrentToken->m_type == TokenType::Identifier);
+    this->getNextToken();
+    return pNode;
+}
+
 GSyntaxNode* GParser::parseConstant()
 {
     if(m_pCurrentToken->m_type == TokenType::LeftParent)
@@ -596,6 +629,16 @@ GType* GParser::parseDeclarationSpec()
         this->getNextToken();
         return GBuildInType::m_longType;
     }
+    else if(m_pCurrentToken->m_type == TokenType::Struct)
+    {
+        this->getNextToken();
+        return this->ParseStructDeclaration();
+    }
+    else if(m_pCurrentToken->m_type == TokenType::Union)
+    {
+        this->getNextToken();
+        return this->ParseUnionDeclaration();
+    }
     return NULL;
 }
 
@@ -661,12 +704,80 @@ GType* GParser::parseTypeSuffix(GType* pType)
     return pType;
 }
 
+GType* GParser::ParseStructDeclaration()
+{
+    GStructType* pType = this->ParseStructOrUnionDeclaration(true);
+    int offset = 0;
+    foreach(GFiled* filed, pType->m_fileds)
+    {
+        offset = this->alignTo(offset, filed->m_pType->m_align);
+        filed->m_offset = offset;
+        offset += filed->m_pType->m_size;
+
+        if(pType->m_align < filed->m_pType->m_align)
+        {
+            pType->m_align = filed->m_pType->m_align;
+        }
+    }
+    pType->m_size = this->alignTo(offset, pType->m_align);
+    return pType;
+}
+
+GType* GParser::ParseUnionDeclaration()
+{
+    GStructType* pType = this->ParseStructOrUnionDeclaration(false);
+    foreach(GFiled* filed, pType->m_fileds)
+    {
+        if(pType->m_size < filed->m_pType->m_size)
+        {
+            pType->m_size = filed->m_pType->m_size;
+        }
+
+        if(pType->m_align < filed->m_pType->m_align)
+        {
+            pType->m_align = filed->m_pType->m_align;
+        }
+    }
+    return pType;
+}
+
+GStructType* GParser::ParseStructOrUnionDeclaration(bool isStruct)
+{
+    StructKind sKind = StructKind::Kind_Struct;
+    if(isStruct == false) sKind = StructKind::Kind_Union;
+
+    GStructType* pStructType = new GStructType(sKind);
+    this->getNextToken();
+    while( m_pCurrentToken->m_type != TokenType::RightBrace )
+    {
+        GType* pBaseType = this->parseDeclarationSpec();
+        GToken* pToken;
+        GType* pType = this->parseDeclarator(pBaseType,pToken);
+        pStructType->m_fileds.append( new GFiled(pType, pToken, 0) );
+
+        while( m_pCurrentToken->m_type == TokenType::Comma)
+        {
+            this->getNextToken();
+            pType = this->parseDeclarator(pBaseType, pToken);
+            pStructType->m_fileds.append( new GFiled(pType, pToken, 0) );
+        }
+
+        Q_ASSERT(m_pCurrentToken->m_type == TokenType::Semicolon);
+        this->getNextToken();
+    }
+    Q_ASSERT(m_pCurrentToken->m_type == TokenType::RightBrace);
+    this->getNextToken();
+    return pStructType;
+}
+
 bool GParser::isValidType(TokenType type)
 {
     if(type == TokenType::Char) return true;
     if(type == TokenType::Short) return true;
     if(type == TokenType::Int) return true;
     if(type == TokenType::Long) return true;
+    if(type == TokenType::Struct) return true;
+    if(type == TokenType::Union) return true;
     return false;
 }
 
@@ -700,4 +811,9 @@ GToken* GParser::lookNextToken()
     }
 
     return NULL;
+}
+
+int GParser::alignTo(int size, int align)
+{
+    return (size + align - 1) / align * align;
 }

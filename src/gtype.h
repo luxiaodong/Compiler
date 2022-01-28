@@ -10,6 +10,7 @@ enum TypeKind
     Kind_Function,
     Kind_Pointer,
     Kind_Array,
+    Kind_StructUnion,
 };
 
 enum BuildInKind
@@ -18,6 +19,12 @@ enum BuildInKind
     Kind_Short,
     Kind_Int,
     Kind_Long,
+};
+
+enum StructKind
+{
+    Kind_Struct,
+    Kind_Union,
 };
 
 class GType
@@ -87,5 +94,22 @@ public:
     GType* m_elementType;
 };
 
+class GFiled
+{
+public:
+    GFiled(GType* pType, GToken* pToken, int offset) : m_pType(pType), m_pToken(pToken), m_offset(offset){}
+    GType* m_pType;
+    GToken* m_pToken;
+    int m_offset;
+};
+
+class GStructType : public GType
+{
+public:
+    GStructType(StructKind sKind) : GType(Kind_StructUnion, 0, 1), m_structKind(sKind){}
+    bool isSameKind(StructKind sKind){return m_structKind = sKind;}
+    StructKind m_structKind;
+    QList<GFiled*> m_fileds;
+};
 
 #endif // GTYPE_H

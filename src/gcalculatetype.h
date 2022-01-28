@@ -29,6 +29,7 @@ public:
     virtual void sizeofNode(GSizeofNode* node);
     virtual void constantNode(GConstantNode* node);
     virtual void variableNode(GVariableNode* node);
+    virtual void structNode(GStructNode *node);
 };
 
 #endif // GCALCULATETYPE_H

@@ -92,6 +92,11 @@ void GSizeofNode::traverse(GSyntaxTreeTraverse*  pAst)
     pAst->sizeofNode(this);
 }
 
+void GStructNode::traverse(GSyntaxTreeTraverse* pAst)
+{
+    pAst->structNode(this);
+}
+
 void GConstantNode::traverse(GSyntaxTreeTraverse*  pAst)
 {
     pAst->constantNode(this);

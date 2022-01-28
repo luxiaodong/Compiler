@@ -55,7 +55,6 @@ public:
     int indexOf(const QString& str){return m_rightList.indexOf(str);}
     int indexOf(const QString& str, int from){return m_rightList.indexOf(str, from);}
 
-
     QString production() const; //打印出产生式
     int size(){return m_rightList.size();}
     bool isEmpty(){return m_isEmpty;}

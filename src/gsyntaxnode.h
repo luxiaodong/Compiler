@@ -212,6 +212,17 @@ public:
     GSyntaxNode* m_pRightNode;
 };
 
+class GStructNode : public GSyntaxNode
+{
+public:
+    virtual ~GStructNode(){}
+    virtual void traverse(GSyntaxTreeTraverse *);
+
+public:
+    GSyntaxNode* m_pNode;
+    GFiled* m_pFiled;
+};
+
 class GSizeofNode : public GSyntaxNode
 {
 public:

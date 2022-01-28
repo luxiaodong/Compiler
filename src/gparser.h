@@ -7,6 +7,8 @@
 #include "src/gsyntaxtree.h"
 #include "src/gtype.h"
 
+//https://cs.wmich.edu/~gupta/teaching/cs4850/sumII06/The%20syntax%20of%20C%20in%20Backus-Naur%20form.htm
+
 class GParser
 {
 public:
@@ -28,17 +30,22 @@ private:
     GSyntaxNode* parseExpressionUnary();
     GSyntaxNode* parseConstant();           //ParsePrimaryExpr
     GSyntaxNode* parseExpressionBracket();  //ParsePostFixExpr
+    GSyntaxNode* parseStructAccessNode(GSyntaxNode* left);   //MakeMemberAccessNode
 
 private:
     GType* parseDeclarationSpec();
     GType* parseDeclarator(GType* baseType, GToken* &pToken);
     GType* parseTypeSuffix(GType* pType);
+    GType* ParseStructDeclaration();
+    GType* ParseUnionDeclaration();
+    GStructType* ParseStructOrUnionDeclaration(bool isStruct);
 
 private:
     bool isValidType(TokenType type);
     void getNextToken();
     GToken* lookNextToken();
     GVariable* createVariable(const QString& name, GType* pType);
+    int alignTo(int size, int align);
 
 public:
     GSyntaxTree* m_pTree;

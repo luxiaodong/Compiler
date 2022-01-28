@@ -39,6 +39,9 @@ enum TokenType{
     SizeOf,
     LeftBracket,
     RightBracket,
+    Struct,
+    Union,
+    Dot,
     Eof,
 };
 

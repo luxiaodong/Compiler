@@ -205,6 +205,11 @@ bool GLexer::nextToken()
         token->m_type = TokenType::Comma;
         nextChar();
     }
+    else if(m_currentChar == '.')
+    {
+        token->m_type = Dot;
+        nextChar();
+    }
     else if(m_currentChar == '&')
     {
         token->m_type = TokenType::Amp;
@@ -271,6 +276,14 @@ bool GLexer::nextToken()
         else if(token->m_context == QString("sizeof"))
         {
             token->m_type = TokenType::SizeOf;
+        }
+        else if(token->m_context == QString("struct"))
+        {
+            token->m_type = TokenType::Struct;
+        }
+        else if(token->m_context == QString("union"))
+        {
+            token->m_type = TokenType::Union;
         }
     }
     else

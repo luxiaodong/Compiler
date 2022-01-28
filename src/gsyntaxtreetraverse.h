@@ -29,6 +29,7 @@ public:
     virtual void sizeofNode(GSizeofNode* node) = 0;
     virtual void constantNode(GConstantNode* node) = 0;
     virtual void variableNode(GVariableNode* node) = 0;
+    virtual void structNode(GStructNode *node) = 0;
 };
 
 #endif // GSYNTAXTREETRAVERSE_H

@@ -164,5 +164,25 @@ int test()
   check(89, fib(sum(({int i = 4, j;}))));
   check(17711, fib(sum(({int i = 4, j = 5; j * 2 - i;}))));
 
+
+  check(1, ({struct {char c;} s;  sizeof(s);}));
+  check(8, ({struct {char c; int a;} s;  sizeof(s);}));
+  check(16, ({struct {char c; int a; long b;} s;  sizeof(s);}));
+  check(32, ({struct {char c[3]; int a[4]; long b;} s;  sizeof(s);}));
+  check(48, ({struct {char c[3]; int a[4]; long b; struct {char c; int a; long b;} s;} s;  sizeof(s);}));
+  check(0, ({struct {} s; sizeof s;}));
+  check(5, ({struct {char c;} s;  s.c = 5; s.c;}));
+  check(12, ({struct {char c; int a;} s;  s.c = 3; s.a = 4; s.a * s.c;}));
+  check(1, ({struct {char c; int a; long b;} s;  s.c = 1; s.a = 2; s.b = 3; s.c;}));
+  check(2, ({struct {char c; int a; long b;} s;  s.c = 1; s.a = 2; s.b = 3; s.a;}));
+  check(3, ({struct {char c; int a; long b;} s;  s.c = 1; s.a = 2; s.b = 3; s.b;}));
+  check(16, ({struct {char c[3]; int a[4]; long b;} s;  sizeof(s.a);}));
+  check(1, ({struct {char c[3]; int a[4]; long b;} s;  s.a[0] = 1; s.a[1] = 2; s.a[2] = 3; s.a[3] = 4; s.a[0];}));
+  check(2, ({struct {char c[3]; int a[4]; long b;} s;  s.a[0] = 1; s.a[1] = 2; s.a[2] = 3; s.a[3] = 4; s.a[1];}));
+  check(3, ({struct {char c[3]; int a[4]; long b;} s;  s.a[0] = 1; s.a[1] = 2; s.a[2] = 3; s.a[3] = 4; s.a[2];}));
+  check(4, ({struct {char c[3]; int a[4]; long b;} s;  s.a[0] = 1; s.a[1] = 2; s.a[2] = 3; s.a[3] = 4; s.a[3];}));
+  check(1, ({struct {char c[3]; int a[4]; long b; struct {char c; int a; long b;} s;} s;  s.s.c = 1; s.s.a = 2; s.s.b = 3; s.s.c;}));
+  check(2, ({struct {char c[3]; int a[4]; long b; struct {char c; int a; long b;} s;} s;  s.s.c = 1; s.s.a = 2; s.s.b = 3; s.s.a;}));
+  check(3, ({struct {char c[3]; int a[4]; long b; struct {char c; int a; long b;} s;} s;  s.s.c = 1; s.s.a = 2; s.s.b = 3; s.s.b;}));
   return 0;
 }

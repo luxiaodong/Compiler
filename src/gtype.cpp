@@ -26,3 +26,4 @@ bool GBuildInType::isIntegerKind()
 
     return false;
 }
+

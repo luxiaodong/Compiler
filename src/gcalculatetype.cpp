@@ -189,3 +189,9 @@ void GCalculateType::variableNode(GVariableNode* node)
 {
     node->m_pType = node->m_pVar->m_pType;
 }
+
+void GCalculateType::structNode(GStructNode *node)
+{
+    node->m_pType = node->m_pFiled->m_pType;
+}
+

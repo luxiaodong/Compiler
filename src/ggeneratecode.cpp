@@ -382,6 +382,12 @@ void GGenerateCode::variableNode(GVariableNode* node)
     load(node->m_pType);
 }
 
+void GGenerateCode::structNode(GStructNode *node)
+{
+    genAddress(node);
+    load(node->m_pType);
+}
+
 void GGenerateCode::genAddress(GSyntaxNode* node)
 {
     GVariableNode* varNode = dynamic_cast<GVariableNode*>(node);
@@ -392,9 +398,18 @@ void GGenerateCode::genAddress(GSyntaxNode* node)
     else
     {
         GUnaryNode* unaryNode = dynamic_cast<GUnaryNode*>(node);
-        if(unaryNode->m_uOp == UnaryOperator::OP_Star)
+        if(unaryNode)
         {
-            unaryNode->m_pNode->generateCode(this);
+            if(unaryNode->m_uOp == UnaryOperator::OP_Star)
+            {
+                unaryNode->m_pNode->generateCode(this);
+            }
+        }
+        else
+        {
+            GStructNode* structNode = dynamic_cast<GStructNode*>(node);
+            this->genAddress(structNode->m_pNode);
+            m_assemblyCode += QString("\tadd $%1, %rax\n").arg(structNode->m_pFiled->m_offset);
         }
     }
 }
@@ -402,6 +417,7 @@ void GGenerateCode::genAddress(GSyntaxNode* node)
 void GGenerateCode::load(GType* pType)
 {
     if(pType->isSameTypeKind(Kind_Array)) return ;
+    if(pType->isSameTypeKind(Kind_StructUnion)) return ;
 
     if(pType->m_size == 1)
     {
@@ -446,6 +462,7 @@ void GGenerateCode::store(GType* pType)
     }
     else
     {
+        qDebug()<<pType->m_size;
         Q_ASSERT(false);
     }
 }
