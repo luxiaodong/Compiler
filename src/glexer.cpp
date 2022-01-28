@@ -60,6 +60,13 @@ bool GLexer::nextToken()
     {
         token->m_type = TokenType::Minus;
         nextChar();
+
+        if(m_currentChar == '>')
+        {
+            token->m_type = TokenType::PointerTo;
+            token->m_context += QString(m_currentChar);
+            nextChar();
+        }
     }
     else if(m_currentChar == '*')
     {

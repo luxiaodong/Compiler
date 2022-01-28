@@ -6,6 +6,7 @@
 #include "src/gsyntaxnode.h"
 #include "src/gsyntaxtree.h"
 #include "src/gtype.h"
+#include "src/gscope.h"
 
 //https://cs.wmich.edu/~gupta/teaching/cs4850/sumII06/The%20syntax%20of%20C%20in%20Backus-Naur%20form.htm
 
@@ -52,7 +53,8 @@ public:
 
 private:
     QList<GVariable*> *m_pLocals; //指向函数的local变量
-    QMap<QString, GVariable*> m_localMaps; //局部变量
+//    QMap<QString, GVariable*> m_localMaps; //局部变量
+    GScope m_scope; //记录变量的定义域
 
 private:
     const GLexer m_lexer;

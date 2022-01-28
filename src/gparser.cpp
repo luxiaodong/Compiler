@@ -13,8 +13,10 @@ GParser::~GParser()
 
 bool GParser::analysis()
 {
+    m_scope.enterScope();
     this->getNextToken();
     m_pTree->m_pRoot = this->parseProgram();
+    m_scope.leaveScope();
     return true;
 }
 
@@ -34,10 +36,9 @@ GSyntaxNode* GParser::parseFunction()
 {
     GFunctionNode* node = new GFunctionNode();
     m_pLocals = &node->m_locals;
-    m_localMaps.clear();
 
     GType* baseType = this->parseDeclarationSpec();
-    GToken*  pToken;
+    GToken* pToken;
     node->m_pType = this->parseDeclarator(baseType, pToken);
     node->m_funcName = pToken->m_context; //函数名
     GFunctionType* funType = dynamic_cast<GFunctionType*>(node->m_pType);
@@ -48,19 +49,18 @@ GSyntaxNode* GParser::parseFunction()
         GType* pType = funType->m_paramList.at(i)->m_pType;
         node->m_args.append( this->createVariable(name, pType));
     }
-    // node->m_pType = funType;
+    node->m_pType = funType;
+    m_scope.enterScope();
     Q_ASSERT(m_pCurrentToken->m_type == TokenType::LeftBrace);
-    // node->m_braceNode = this->parseSentence();
-
     this->getNextToken();
     node->m_sentenceList.clear();
     while(m_pCurrentToken->m_type != TokenType::RightBrace)
     {
-//            qDebug()<<m_pCurrentToken->m_context;
         node->m_sentenceList.append(this->parseSentence());
     }
     Q_ASSERT(m_pCurrentToken->m_type == TokenType::RightBrace);
     this->getNextToken();
+    m_scope.leaveScope();
     return node;
 }
 
@@ -176,6 +176,7 @@ GSyntaxNode* GParser::parseSentence()
     }
     else if(m_pCurrentToken->m_type == TokenType::LeftBrace)
     {
+        m_scope.enterScope();
         GBraceNode* node = new GBraceNode();
         this->getNextToken();
         node->m_sentenceList.clear();
@@ -185,6 +186,7 @@ GSyntaxNode* GParser::parseSentence()
         }
         Q_ASSERT(m_pCurrentToken->m_type == TokenType::RightBrace);
         this->getNextToken();
+        m_scope.leaveScope();
         return node;
     }
     else if(m_pCurrentToken->m_type == TokenType::Return)
@@ -199,33 +201,29 @@ GSyntaxNode* GParser::parseSentence()
     }
     else if(this->isValidType(m_pCurrentToken->m_type)) //变量声明
     {
-        GDeclarationNode* node = new GDeclarationNode();
         GType* baseType = this->parseDeclarationSpec();
-
-        while(true)
+        GDeclarationNode* node = new GDeclarationNode();
+        int i = 0;
+        while(m_pCurrentToken->m_type != TokenType::Semicolon)
         {
+            if(i > 0)
+            {
+                this->getNextToken();
+            }
+
             GToken* pToken;
             GType* pType = this->parseDeclarator(baseType, pToken);
             GVariable* var = this->createVariable(pToken->m_context, pType);
-
+            i++;
             if(m_pCurrentToken->m_type == TokenType::Assign)
             {
-                this->getNextToken();
                 GVariableNode* varNode = new GVariableNode();
                 varNode->m_pVar = var;
-                GAssignNode* assign = new GAssignNode();
-                assign->m_pLeftNode = varNode;
-                assign->m_pRightNode = this->parseExpression();
-                node->m_assignList.append(assign);
-            }
-
-            if(m_pCurrentToken->m_type == TokenType::Semicolon)
-            {
-                break;
-            }
-            else if(m_pCurrentToken->m_type == TokenType::Comma)
-            {
+                GAssignNode* assignNode = new GAssignNode();
                 this->getNextToken();
+                assignNode->m_pLeftNode = varNode;
+                assignNode->m_pRightNode = this->parseExpression();
+                node->m_assignList.append(assignNode);
             }
         }
 
@@ -298,6 +296,16 @@ GSyntaxNode* GParser::parseExpressionBracket()
             this->getNextToken();
             GSyntaxNode* pNode = this->parseStructAccessNode(left);
             left = pNode;
+            continue;
+        }
+        else if(m_pCurrentToken->m_type == TokenType::PointerTo)
+        {
+            this->getNextToken();
+            GUnaryNode* pStarNode = new GUnaryNode();
+            pStarNode->m_uOp = UnaryOperator::OP_Star;
+            pStarNode->m_pNode = left;
+            GSyntaxNode* sNode = this->parseStructAccessNode(pStarNode);
+            left = sNode;
             continue;
         }
         else
@@ -529,6 +537,7 @@ GSyntaxNode* GParser::parseStructAccessNode(GSyntaxNode* left)
 {
     GCalculateType calType;
     left->calculateType(&calType);
+//qDebug()<<left->m_pType->m_type;
     Q_ASSERT(left->m_pType->isSameTypeKind(Kind_StructUnion));
 
     GStructType* pStructType = dynamic_cast<GStructType*>(left->m_pType);
@@ -558,6 +567,7 @@ GSyntaxNode* GParser::parseConstant()
         this->getNextToken();
         if(m_pCurrentToken->m_type == TokenType::LeftBrace)
         {
+            m_scope.enterScope();
             this->getNextToken();
             GExpressionSentenceNode* node = new GExpressionSentenceNode();
             while(m_pCurrentToken->m_type != TokenType::RightBrace)
@@ -567,6 +577,7 @@ GSyntaxNode* GParser::parseConstant()
             this->getNextToken();
             Q_ASSERT(m_pCurrentToken->m_type == TokenType::RightParent);
             this->getNextToken();
+            m_scope.leaveScope();
             return node;
         }
 
@@ -583,7 +594,7 @@ GSyntaxNode* GParser::parseConstant()
             return this->parseFunctionCall();
         }
 
-        GVariable* var = m_localMaps.value(m_pCurrentToken->m_context, NULL);
+        GVariable* var = m_scope.findVar(m_pCurrentToken->m_context);
         Q_ASSERT(var);
         GVariableNode* node = new GVariableNode();
         node->m_pToken = m_pCurrentToken;
@@ -651,6 +662,7 @@ GType* GParser::parseDeclarator(GType* baseType, GToken* &pToken)
         this->getNextToken();
     }
 
+//qDebug()<<m_pCurrentToken->m_context;
     Q_ASSERT(m_pCurrentToken->m_type == TokenType::Identifier);
     pToken = m_pCurrentToken; //第一个变量 或者函数名
     this->getNextToken();
@@ -662,6 +674,7 @@ GType* GParser::parseTypeSuffix(GType* pType)
 {
     if(m_pCurrentToken->m_type == TokenType::LeftParent) //是个函数
     {
+        m_scope.enterScope();
         GFunctionType* pFunType = new GFunctionType(pType);
         this->getNextToken();
 
@@ -687,6 +700,7 @@ GType* GParser::parseTypeSuffix(GType* pType)
         }
         Q_ASSERT(m_pCurrentToken->m_type == TokenType::RightParent);
         this->getNextToken();
+        m_scope.leaveScope();
         return pFunType;
     }
     else if(m_pCurrentToken->m_type == TokenType::LeftBracket)
@@ -746,6 +760,20 @@ GStructType* GParser::ParseStructOrUnionDeclaration(bool isStruct)
     StructKind sKind = StructKind::Kind_Struct;
     if(isStruct == false) sKind = StructKind::Kind_Union;
 
+    GToken* pToken = NULL;
+    if(m_pCurrentToken->m_type == TokenType::Identifier)
+    {
+        pToken = m_pCurrentToken;
+        this->getNextToken();
+    }
+
+    if(pToken && m_pCurrentToken->m_type != TokenType::LeftBrace)
+    {
+        GType* pType = m_scope.findTag(pToken->m_context);
+        Q_ASSERT(pType);
+        return dynamic_cast<GStructType*>(pType);
+    }
+
     GStructType* pStructType = new GStructType(sKind);
     this->getNextToken();
     while( m_pCurrentToken->m_type != TokenType::RightBrace )
@@ -767,6 +795,12 @@ GStructType* GParser::ParseStructOrUnionDeclaration(bool isStruct)
     }
     Q_ASSERT(m_pCurrentToken->m_type == TokenType::RightBrace);
     this->getNextToken();
+
+    if(pToken)
+    {
+        m_scope.pushTag(pToken->m_context, pStructType);
+    }
+
     return pStructType;
 }
 
@@ -786,7 +820,7 @@ GVariable* GParser::createVariable(const QString& name, GType* pType)
     GVariable* var = new GVariable(name, pType);
     m_pLocals->append(var);
 //    m_pLocals->prepend(var);
-    m_localMaps.insert(name, var);
+    m_scope.pushVar(name, var);
     return var;
 }
 
@@ -796,6 +830,7 @@ void GParser::getNextToken()
     {
         m_pCurrentToken = m_lexer.m_tokenList.at(m_tokenIndex);
         m_tokenIndex++;
+//qDebug()<<"============>"<<m_pCurrentToken->m_context;
     }
     else
     {

@@ -42,6 +42,7 @@ enum TokenType{
     Struct,
     Union,
     Dot,
+    PointerTo,
     Eof,
 };
 

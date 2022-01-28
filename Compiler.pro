@@ -15,6 +15,7 @@ SOURCES += main.cpp \
     src/glexer.cpp \
     src/gcompiler.cpp \
     src/gparser.cpp \
+    src/gscope.cpp \
     src/gsyntaxtreetraverse.cpp \
     src/gtoken.cpp \
     src/ggeneratecode.cpp \
@@ -44,6 +45,7 @@ HEADERS += \
     src/glexer.h \
     src/gcompiler.h \
     src/gparser.h \
+    src/gscope.h \
     src/gsyntaxtreetraverse.h \
     src/gtoken.h \
     src/ggeneratecode.h \

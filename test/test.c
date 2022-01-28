@@ -33,7 +33,6 @@ int fib(int n) {
   return fib(n-1) + fib(n-2);
 }
 
-
 int test() 
 {
   check(14, ({ 1 + 2 + 4 -2 +9  ;}));
@@ -164,7 +163,6 @@ int test()
   check(89, fib(sum(({int i = 4, j;}))));
   check(17711, fib(sum(({int i = 4, j = 5; j * 2 - i;}))));
 
-
   check(1, ({struct {char c;} s;  sizeof(s);}));
   check(8, ({struct {char c; int a;} s;  sizeof(s);}));
   check(16, ({struct {char c; int a; long b;} s;  sizeof(s);}));
@@ -184,5 +182,12 @@ int test()
   check(1, ({struct {char c[3]; int a[4]; long b; struct {char c; int a; long b;} s;} s;  s.s.c = 1; s.s.a = 2; s.s.b = 3; s.s.c;}));
   check(2, ({struct {char c[3]; int a[4]; long b; struct {char c; int a; long b;} s;} s;  s.s.c = 1; s.s.a = 2; s.s.b = 3; s.s.a;}));
   check(3, ({struct {char c[3]; int a[4]; long b; struct {char c; int a; long b;} s;} s;  s.s.c = 1; s.s.a = 2; s.s.b = 3; s.s.b;}));
+  
+  check(5, ({struct A {char c;}; struct A s; s.c = 5; s.c;}));
+  check(30, ({struct A {char c, d;}; struct A s; s.c = 5; s.d = 6; s.c * s.d;}));
+  check(5, ({struct A {char c;} s; s.c = 5; s.c;}));
+  check(5, ({struct A {char c;} s; struct A *p = &s;  p->c = 5; s.c;}));
+  check(30, ({struct A {char c, d;} s; struct A *p = &s; p->c = 5; p->d = 6; s.c * s.d;}));
+
   return 0;
 }
